@@ -1,0 +1,25 @@
+\section{Threat Model}
+
+% We assume an adversarial attack model which starts with the adversary attempting to reverse engineer the classifier. We assume that
+% the attacker has access to a machine with a similar detector as the
+% victim machine. This allows the attacker to observe the behavior
+% of the classifier for given programs (whether malware or normal
+% programs). With a model of the detector, the attacker can attempt to
+% generate evading malware that hide themselves by changing some
+% of their characteristics (feature values). 
+
+% Such evading mechanism
+%  is known as mimicry attacks~\cite{Mimicry2006,Mimicry2007}, which can be in the form of
+%  no-op insertion, code obfuscation by the attackers, or calling benign
+%  functions in the middle of the malicious payload~\cite{SCRAP2013HPCA}.
+% We assume that the attacker that undertakes malware rewriting
+% as part of a mimicry attack is interested in maintaining reasonable
+% performance of the malware. If this assumption is not true, an attacker can simply run a normal program with embedded malware,
+% that advances the malware program arbitrarily slow (e.g., 1 malware
+% instruction every N normal instructions where N is arbitrarily large) making detection impossible. Note that this is a limitation of all
+% anomaly detectors, and not only HMDs. This assumption is also
+% reasonable for important segments of malware such as: malware
+% that is time sensitive (e.g., that performs covert or side-channel attacks [16, 23, 37, 42]) and malware that is computationally intensive
+% such as that executing on botnets being monetized under a pay-perinstall model [9] (e.g., Spam bots or Click fraud). Such malware have
+% a utility to the malware writer proportional to their performance.
+

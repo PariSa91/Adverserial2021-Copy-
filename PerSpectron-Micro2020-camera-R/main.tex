@@ -1,0 +1,105 @@
+%
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathptmx} % This is Times font
+\usepackage{adjustbox}
+\usepackage{paralist}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage[normalem]{ulem}
+\usepackage[hyphens]{url}
+\usepackage[sort,nocompress]{cite}
+\usepackage[final]{microtype}
+%\usepackage{flushend}
+\usepackage{listings}
+\usepackage{ntheorem,lipsum}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amsmath}
+\usepackage{longtable}
+\theorembodyfont{\upshape}
+\newtheorem{definition}{Definition}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{soul,color}
+\usepackage{makecell}
+\usepackage{adjustbox}
+\soulregister\cite7
+\soulregister\ref7
+\soulregister\pageref7
+\usepackage{titlesec}
+
+\usepackage{caption} 
+\captionsetup[table]{skip=8pt}
+
+\newcommand{\scheme}{\textsc{APL}}
+
+\newcommand{\ignore}[1]{}
+\newcommand{\nael}[1]{{\color{green} Nael: \emph{#1}}} 
+\newcommand{\samira}[1]{{\color{blue} samira: \emph{#1}}} 
+\newcommand{\elba}[1]{{\color{orange} Elba: \emph{#1}}} 
+\newtheorem{observation}{\textbf{Observation}}
+\newtheorem{remark}{\textbf{Remark}}
+
+
+\newenvironment{hlbreakable}%
+  {\colorbox{yellow}}%
+  {}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+%--------------------------------------------------
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\newcommand{\linebreakand}{%
+  \end{@IEEEauthorhalign}
+  \hfill\mbox{}\par
+  \mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
+ \begin{document}
+
+\title{Adversarial-based Perceptron Learning In Hardware \\
+
+}
+
+
+
+
+\maketitle
+%--------Perspectron sections----------------
+\input{abstract}
+\begin{IEEEkeywords}
+perceptron learning, microarchitectural attack defenses, secure architectures
+\end{IEEEkeywords}
+\input{introduction}
+\input{background}
+\input{threat}
+\input{alg}
+\input{hw}
+\input{method}
+\input{secAnalys}
+\input{results}
+\input{related}
+\input{future}
+%---------End Perspectrion sections----------
+%%%%%%%%% -- BIB STYLE AND FILE -- %%%%%%%%
+\bibliographystyle{IEEEtran}
+\bibliography{bib}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
