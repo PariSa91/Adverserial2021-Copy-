@@ -43,9 +43,44 @@
 
 \subsection{Microarchitectural Attacks}
 
+\subsection{Perceptron and Feature Selection}
+
+ 
+
+
+Neural network models used in software detectors, feature deep multi-layered  networks ({\em e.g.} RNN) are not easily amenable to hardware due to design and runtime complexity. But Perceptron learning has shown to be implementable in hardware for various  applications including branch prediction, prefetching, replacement policies, and CPUadaptation~\cite{intelISCA2019}. Recent microarchitectures from Oracle~\cite{SPARCT4}, AMD ({\em e.g.} Bobcat, Jaguar, Piledriver, Zen, etc.), and Samsung~\cite{Mongoose,M3} are documented as featuring perceptron-based branch predictors.
+
+
+% Hinton~\cite{Hinton1985shape} 
+% finds that using the entire space of possible features in the 
+% training set made the 
+% mapping from the features’ instantiation parameters to the
+% object’s instantiation parameters became {\em linear} allowing the use of a simpler architecture, which could efficiently 
+% handle more complex images.   Similarly 
+In this work we laverage PerSpectron which is a  hardware detector for microarchitectural attacks which uses a simple one layer neural network,  allowing the use of a simpler architecture, which could efficiently 
+handle more complex footprints of attacks.
+PerSpectron~\cite{PerSpectron} found 106 microarchitectural features that when included in training, it could map a non-linearly separable problem to linear, which was then 
+separable by {\em perceptron} and is readily implementable in hardware~\footnote{An example of such feature is the effect of misses and stalls 
+in the Fetch stage. The squashed cycles in each stage, all the ROB, IQ, and 
+Register full events, undone maps in the Rename stage, and memory order 
+violation in the IEW stage propagate back to the Fetch stage. The relationship 
+between these events' Fetch is not a simple cumulative function in an out-of-order 
+processor. In addition, PerSpectron showed that because the formation about attacks moves around the
+processor, mutually correlated features of all components of processors should be included in the feature set in order to detect new variations of attacks.However, features such as \textit{fetch.MiscStallCycle} capture the 
+relationship.}. The result was competitive 
+with a more complex deepNN that is not easily implementable in hardware.
+
+% \subsection{Feature selection}
+% Unlike image information that is simple pixels, microarhitectural features are much more complex. PerSpectron includes features that capture the relationship between multiple features. Therefore no hidden layer is needed~\footnote{}. The weights associated to these features have the potential to be updated further, similar to hidden weights in RNNs.
+% No hidden layer was necessary---the 
+% mapping from the features' instantiation parameters to the object's 
+% instantiation parameters became linear.
+
+
+
 \subsection{Adversarial Attacks Against Machine Learning}
 
-Recent literature has considered two types of threat models: black-box and white-box attacks. Under the black-box attack model, the attacker does not have access to the classification model parameters; whereas in the white-box attack model, the attacker has complete access to the model architecture and parameters, including potential defense mechanisms.
+Recent literature has considered two types of adversarial machine learning attacks: black-box and white-box attacks. Under the black-box attack model, the attacker does not have access to the classification model parameters; whereas in the white-box attack model, the attacker has complete access to the model architecture and parameters, including potential defense mechanisms.
 %(Papernot et al., 2017; Tramer et al., 2017; ` Carlini & Wagner, 2017). 
 
 
@@ -61,25 +96,6 @@ attack method on the substitute network. It was found that such examples designe
 
 White-box models assume that the attacker has complete knowledge of all the classifier parameters, i.e., network architecture and weights, as well as the details of any defense mechanism. Given an input x and its associated ground-truth label y, the attacker thus has access to the loss function J(x, y) used to train the network, and uses it to compute the adversarial perturbation $\delta$. Attacks can be targeted, in that they attempt to cause the perturbed attack to be misclassified as safe target class. 
 
-Unlike image classification there is no direct mapping from microarchitectural features value to software code.   
-Projecting the adversarial perturbation $\delta$ to the program transformation is not trivial for both white-box and black-box attack model. 
-%For example the number of \textit{commit.NonSpecStalls} can be 
-Thus, generating adversarial microarchitectural attack manually is  expensive and cumbersome, often requiring days for developing a single adversarial example that would fool a robust detector {\em i.e.,} to leak data before the detector flags it as suspicious. 
-
-Often handcrafted adversarial attacks, and even real microarchitectural attack data are not sufficient for training and evaluation of a robust and reliable detector: While at least 350,000 new malware instances are being created and detected every day, microarchitectural attacks were reported only over 20 distinct attack variations. 
-Previous detection mechanisms for microarchitectural attacks are trained and evaluated only on small samples, e.g., proof of concept code of current Spectre attacks and limited hand crafted adversarial perturbation similar to typical strategy 
-used by malware to evade signature based 
-detectors~\cite{PaulKocher,paulKocherSpectreAttacks}. No teams of human can realistically design enough adversarial training data for ML-based microarchitectural attack detectors.
-This is causing low confidence in AI-based defense systems against microarchitectural attacks.
-
-Typical data augmentation technique using program synthesizers has many limitations. For one, small modifications yields examples that do not diverge far from the original program. As a result, the additional examples do not add much variety to help the algorithm learn to generalize. In the case of microarchitectural attack detection, we want to see leakage happens using different technique, not just permutations of the same underlying attack.
-In the case of microarchitectural attack detection, we want different examples of the same underlying vulnerability. Enriching a dataset with synthetic examples such as those produced by GANs, has potential to further enrich the available data beyond traditional augmentation techniques. That is precisely our first goal to investigate. 
-
- 
- The following framework sets our motivations:
-  We have a data set of known attack samples $X$. 
- We assume that the observations have been generated according to some unknown distribution. 
- A generative model tries to mimic observed attack probability. If we achieve this goal , we can sample from the generated probability to generate observations that appear to have been drawn from known attacks. Our goal are: (1) to generate new attack examples that appear to have been drawn from seen attacks and (2) to generate examples that are suitably different from the observation in $X$. In other words, our model shouldn't simply reproduce things it has already seen. 
 
 
 %\subsection{Handcrafting Adversarial Attack Strategies}
@@ -112,11 +128,11 @@ In the case of microarchitectural attack detection, we want different examples o
  
 
 \subsection{Defenses}
-A popular approach to defend against adversarial attack in computer vision is to augment the training dataset with adversarial examples~\cite{szegedy2014going, Goodfellow2015ADVexample, moosavidezfooli2016deepfool}. Adversarial examples are generated using one or more chosen attack models and added to the training
-set. This often results in increased robustness when the attack model used to generate the augmented
-training set is the same as that used by the attacker. It tends to make the model more robust to white-box attacks than to black-box attacks due to gradient masking~\cite{Papernot2016TowardsTS, tramer2020ensemble}.
 
-%2.2.2 DEFENSIVE DISTILLATION
+ Hardware Malware Detectors (HMDs)~\cite{RHMD2017} proposed defenses against the proliferation of malware. They stochastically switch between different detectors. These detectors can be shown to be provably more difficult to
+reverse engineer based on resent results in probably approximately
+correct (PAC) learnability theory. 
+
 Defensive distillation~\cite{papernot2016distillation} trains the classifier in two rounds using a variant of the
 distillation~\cite{hinton2015distilling} method. This has the desirable effect of learning a smoother network
 and reducing the amplitude of gradients around input points, making it difficult for attackers to
@@ -124,46 +140,21 @@ generate adversarial examples~\cite{papernot2016distillation}. It was, however, 
 distillation is effective against white-box attacks, it fails to adequately protect against black-box
 attacks transferred from other networks~\cite{Carlini2017}.
 
-Defenses against the proliferation of malware include Hardware Malware Detectors (HMDs)~\cite{RHMD2017}. They stochastically switch between different detectors. These detectors can be shown to be provably more difficult to
-reverse engineer based on resent results in probably approximately
-correct (PAC) learnability theory. 
-%RHMD studied limited number of high level features and techniques used for attacking malware detectors. 
-
-
-\subsection{Perceptron}
-Unlike image information that is simple pixels, microarhitectural features are much more complex.PerSpectron includes features that capture the relationship between multiple features. Therefore no hidden layer is needed~\footnote{An example of such feature is the effect of misses and stalls 
-in the Fetch stage. The squashed cycles in each stage, all the ROB, IQ, and 
-Register full events, undone maps in the Rename stage, and memory order 
-violation in the IEW stage propagate back to the Fetch stage. The relationship 
-between these events' Fetch is not a simple cumulative function in an out-of-order 
-processor. However, features such as \textit{fetch.MiscStallCycle} capture the 
-relationship.}. The weights associated to these features have the potential to be updated further, similar to hidden weights in RNNs.
-No hidden layer was necessary---the 
-mapping from the features' instantiation parameters to the object's 
-instantiation parameters became linear. 
-
-In addition, PerSpectron showed that because the formation about attacks moves around the
-processor, mutually correlated features of all components of processors should be included in the feature set in order to detect new variations of attacks. 
-% Neural network models used     in current work feature deep multi-layered  networks ({\em e.g.} RNN)  are not easily amenable to hardware due to design and runtime complexity. 
-% Hinton~\cite{Hinton1985shape} 
-% finds that using the entire space of possible instantiation parameters in the 
-% training set allowed the use of a simpler architecture, which could efficiently 
-% handle more complex images.  Similarly PerSpectron showed that using carefully selected detailed microarchitectural features and a simple  single-layered perceptron can provide a readily implementable solution~\cite{PerSpectron}. 
-% Perceptron learning has shown to be implementable in hardware for various  applications including branch prediction, prefetching, replacement policies, and CPUadaptation~\cite{intelISCA2019}. Recent microarchitectures from Oracle~\cite{SPARCT4}, AMD ({\em e.g.} Bobcat, Jaguar, Piledriver, Zen, etc.), and Samsung~\cite{Mongoose,M3} are documented as featuring perceptron-based branch predictors.
-
-% Unlike image information that is simple pixels, microarhitectural features are much more complex.PerSpectron includes features that capture the relationship between multiple features. That's why hidden layer is not needed. ~\footnote{An example of such feature is the effect of misses and stalls 
-% in the Fetch stage. The squashed cycles in each stage, all the ROB, IQ, and 
-% Register full events, undone maps in the Rename stage, and memory order 
-% violation in the IEW stage propagate back to the Fetch stage. The relationship 
-% between these events' Fetch is not a simple cumulative function in an out-of-order 
-% processor. However, features such as \textit{fetch.MiscStallCycle} capture the 
-% relationship.} The weights associated to these features have the potential to be updated further, similar to hidden weights in RNNs.
-% No hidden layer was necessary---the 
-% mapping from the features' instantiation parameters to the object's 
-% instantiation parameters became linear. In addition, PerSpectron showed that as the formation about attacks moves around the
-% processor, mutually correlated features of all components of processors should be included in the feature set in order to detect new variations of attacks. 
+A popular approach to defend against adversarial machine attack is to augment the training dataset with adversarial examples~\cite{szegedy2014going, Goodfellow2015ADVexample, moosavidezfooli2016deepfool}. Adversarial examples are generated using one or more chosen attack models and added to the training
+set. This often results in increased robustness when the attack model used to generate the augmented
+training set is the same as that used by the attacker. It tends to make the model more robust to white-box attacks than to black-box attacks due to gradient masking~\cite{Papernot2016TowardsTS, tramer2020ensemble}.
 
 
 
 
- \subsection{Game setup}
+
+
+Typical data augmentation technique using program synthesizers has many limitations. For one, small modifications yields examples that do not diverge far from the original program. As a result, the additional examples do not add much variety to help the algorithm learn to generalize. In the case of microarchitectural attack detection, we want to see leakage happens using different technique, not just permutations of the same underlying attack.
+In the case of microarchitectural attack detection, we want different examples of the same underlying vulnerability. Enriching a dataset with synthetic examples such as those produced by Generative Adversarial Networks (GANs)~\cite{goodfellow2014generative}, has potential to further enrich the available data beyond traditional augmentation techniques. That is precisely our first goal to investigate. 
+
+ 
+ The following framework sets our motivations:
+  We have a data set of known 106  microarchitectural attack performance counter samples collected in hardware $X$. 
+ We assume that the observations have been generated according to some unknown distribution. 
+ A generative model tries to mimic observed attack probability. If we achieve this goal , we can sample from the generated probability to generate observations that appear to have been drawn from known attacks. Our goal are: (1) to generate new attack examples that appear to have been drawn from seen attacks and (2) to generate examples that are suitably different from the observation in $X$. In other words, our model shouldn't simply reproduce things it has already seen. 
+

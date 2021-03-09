@@ -1,1 +1,27 @@
 \section{Methodology}\label{method}
+In all experiments and evaluations we used 3-fold cross validation with case separation at
+the patient level and each fold contained a balanced number
+of attacks, and safe programs.
+
+% Since
+% our dataset was too small for effective training, we incorporated classic augmentation for the training process. We employed the DCGAN architecture to train each  class separately, using the same 3-fold cross validation process and the
+% same data partition. 
+
+
+\subsection{Training}
+GANs are notoriously hard to both train and evaluate. As with any other cutting-edge field, opinions about what is the best approach are evolving and no study has been done on microarchitectural data. 
+
+We want to use GANs to create a large dataset, but we need a large dataset to train the GAN in the first place. 
+Our solution is as follows:
+first we use standard data augmentation using program synthesising to create a larger dataset. Second, we used this dataset to train a GAN to create synthetic examples. Third, we use the augmented dataset from step 1 along with the GAN-produced synthetic examples from step 2 to train the PerSpectron. The GAN model we used is a variation of Deep Convolutions GAN. We had to adjust the dimensions of hidden layers and the dimensions of the output from the Generator and input into the Discriminator PerSpectron. Then we used the trained PerSpectron to classify unseen test set.  
+
+Training dataset-- The dataset of all safe programs and real attacks that we want the generator to learn to emulate with near-perfect quality. This dataset serves as input($x$) to the generator network. 
+
+Random noise vector-- The raw input ($z$) to the Generator network. This input is a vector of random numbers that the generator uses as a starting point for generating adversarial examples. 
+
+Discriminator network-- The discriminator takes as input either the real examples ($x$) coming from the training set or an adversarial example $x^{\star}$ produced by the generator. For each example, the discriminator determines and outputs the probability of whether the example is adversarial.
+
+Iterative training/tuning--For each of the discriminators predictions, we determine how good it is--much as we would for a regular classifier-- and use results to attractively tune the discriminator and the generator networks through backpropogation; the discriminator's weights and biases are updated to maximize its classification and accuracy ( maximizing the probability of correct prediction: ($x$) as attack and $x^{\star}$ is safe. 
+The generator's weights and biases are updated to maximize the probability that the discriminator missclassifies $x^{\star}$ as safe program. 
+
+
