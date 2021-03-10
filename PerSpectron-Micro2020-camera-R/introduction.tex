@@ -1,4 +1,4 @@
-\section{Introduction} 
+\section{Introduction} \label{intro}
 %In hardware we are limited to one layer neural network (Perceptron). Perceptron can only learn linearly separable functions.  
 % showed that using carefully selected detailed microarchitectural features and a simple  single-layered perceptron can provide a readily implementable solution. 
 
@@ -18,7 +18,7 @@ ICCAD2015Wang,
 Duppel2013Zhang, 
 mushtaq:cel-01824512}. 
 
-Using machine learning enables detection before the attack can be successful, including detection of calibration phases required for attacks, training phases, etc. 
+More importantly, using machine learning enables detection before the attack can be successful, including detection of calibration phases required for attacks, training phases, etc. Contrary to static methods such as cyclic inference detection.  
 However, this presents a particularly difficult
 problem for simulation-to-real-world transfer: %besides the targeted vulnerable components of hardware changing in each variations of these attacks,
 the detection
@@ -43,23 +43,45 @@ described in prior hardware malware detector is potentially prohibitively expens
 However, few studies have conclusively studied methods to increase robustness of  microarchitectural attack detectors in hardware against adversarial machine learning attacks. 
 
 
-Designing such a system in hardware poses multiple challenges: First, often handcrafted adversarial attacks, and even real microarchitectural attack data are not sufficient for training and evaluation of a robust and reliable detector: While at least 350,000 new malware instances are being created and detected every day, microarchitectural attacks were reported only over 20 distinct attack variations. 
+Designing such a system in hardware poses multiple challenges: First, often handcrafted adversarial attacks, and even real microarchitectural attack data are not sufficient for training and evaluation of a robust and reliable detector: While at least 350,000 new malware instances are being created and detected every day, microarchitectural attacks were reported only over 20 distinct attack variations in 2019. 
 Previous detection mechanisms for microarchitectural attacks are trained and evaluated only on small samples, e.g., proof of concept code of current Spectre attacks and limited hand crafted adversarial perturbation similar to typical strategy 
 used by malware to evade signature based
-detectors~\cite{PaulKocher,paulKocherSpectreAttacks}. No teams of human can realistically design enough adversarial training data for ML-based microarchitectural attack detectors.
+detectors~\cite{PaulKocher,paulKocherSpectreAttacks}. This is because no teams of human can realistically design enough adversarial training data for ML-based microarchitectural attack detectors. In this work we attempt to solve this problem. 
 
 
 
-Second, while augmenting the training dataset with adversarial examples~\cite{szegedy2014going, Goodfellow2015ADVexample, moosavidezfooli2016deepfool} has been proven to almost always improve the accuracy of machine learning detectors in other domains such as image classification, projecting the adversarial perturbation to the program  is not trivial in microarchitectural attacks. More importantly, there is no direct mapping from microarchitectural features value to program instructions (software code).   
- Thus, generating adversarial microarchitectural attack manually is  expensive and cumbersome, often requiring days for developing a single adversarial example that would fool a robust detector {\em i.e.,} to leak data before the detector flags it as suspicious.
+Second, augmenting the training dataset with adversarial examples~\cite{szegedy2014going, Goodfellow2015ADVexample, moosavidezfooli2016deepfool} has been proven to almost always improve the accuracy of machine learning detectors in other domains such as image classification. However,  projecting the adversarial perturbation to the program is not trivial in microarchitectural attacks. There is no direct mapping from microarchitectural features value to program instructions (software code). Thus, generating adversarial microarchitectural attack manually is  expensive and cumbersome, often requiring days for developing a single adversarial example that would fool a robust detector {\em i.e.,} to leak data before the detector flags it as suspicious.
+
+Third, unlike image pixels that can be easily manipulated without changing the image's visibility in the human eye, the manipulation to microarchitectural attack is restricted to its functionality. Prior works in developing evasive malware~\cite{RHMD2017}, dynamically injected instructions to the malware binary to change the feature vector in a controlled way based on the reverse engineered classifier to attempt to move the malware across the classification boundary. Microarchitectural attacks functionality depends highly on the fine grain state of microarchitecture and relative timing of instructions. Insertion of instructions can easily disrupt the state generated by the channels of attack and disable the attack.  Even when instructions are injected carefully, {\em e.i.,} before and after attacks atomic tasks, to ensure that the functionality of the attack is not affected, the new microarchitectural samples do not add extra information to the model, because hardware detectors generalize based on the footprint of attack which is during the atomic tasks. Hardware detectors have 1000 times higher sampling frequency than software detectors and added instructions  does not hide the footprint from hardware detectors. Thus as we will show, data augmentation produced by such conventional methods, does not improve the accuracy of  microarchitectural attack classifier, as we will present in section~\ref{}. 
 
 
-The science of defenses for machine learning based  detection in hardware against evasive attacks are somewhat less well developed. This is the main reason for low confidence in ML-based detection systems in hardware against microarchitectural attacks. In this paper we contribute on several defensive goals:
+
+%Instructions are inserted before branches or at function level. 
+%With microarchitectural features, some features can not be controlled directly {\em i.e., }
+
+%idea microarchitectural attack evasion is only possible by changing methods, 
+
+Forth,  
+typical data augmentation technique using program synthesizers has many limitations to be used as adversarial example. For one, small modifications yields examples that do not diverge far from the original program. As a result, the additional examples do not add much variety to help the algorithm learn to generalize. In the case of microarchitectural attack detection, we want to see leakage happens using different technique, not just permutations of the same underlying attack.
+In the case of microarchitectural attack detection, we want different examples of the same underlying vulnerability. Enriching a dataset with synthetic examples such as those produced by Generative Adversarial Networks (GANs)~\cite{goodfellow2014generative}(described in section~\ref{overview}), has potential to further enrich the available data beyond traditional augmentation techniques. That is precisely our first goal to investigate. 
+
+ \samira {Add dynamic model transformation motive here }
+ 
+ Thus, the following framework sets our motivations:
+  We have a data set of known   microarchitectural attack performance counter samples collected in hardware. 
+ We assume that the observations have been generated according to some unknown distribution. 
+ We design an automatic model that tries to mimic observed attack and safe programs footprints. If we achieve this goal , we can use the generated samples to train our detector offline. Our goals are: (1) to generate new attack examples that appear to have been drawn from seen attacks and (2) to generate examples that are suitably different from the observed attacks. In other words, our model shouldn't simply reproduce things it has already seen. (3) A method to control the category of microarchitectural attacks generated {\em controlling the transmit and recovery channel} during training. (4) A dynamic training method to ensure that the model does not rely on specific features or unit of pipeline and to reduce the  transferability of the final classification parameter. 
+ 
+ 
+ 
+Finally, the science of defenses for machine learning based  detection in hardware against evasive attacks are somewhat less well developed. This is the main reason for low confidence in ML-based detection systems in hardware against microarchitectural attacks. In this paper we contribute on several defensive goals:
 
 \begin{enumerate}
 \item We present the first use of adversarial learning to improve the
 design of hardware detectors for microarchitectural attacks. 
 \vspace{2mm}
+
+\item We show that data augmentation using common program synthesizer does not improve the accuracy of detection, but training on adversarial examples significantly improves the accuracy of hardware detection for microarhitectural attacks. 
 
 \item We design the first asymmetric  adversarial perceptron training, in which a one layer neural network that is amenable in hardware, can be trained by a more complex deep neural network in software.
 \vspace{2mm}
