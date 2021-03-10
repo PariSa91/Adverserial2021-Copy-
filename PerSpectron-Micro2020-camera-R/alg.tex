@@ -25,10 +25,13 @@ Instead of recognising the pattern, the Generator learns to create them essentia
 Accordingly, each time the discriminator is fooled into classifying an adversarial attack as safe, the generator knows it did something well. Conversely each time the discriminator correctly rejects a generator-produced adversarial as attack, the generator receives the feedback that it needs to improve.
 The discriminator continues to improve as well. Like any classifier, it learns from how far its predictions are from the true class (safe or suspicious). So, as the generator gets better at producing realistic adversarial sample, the discriminator gets better at telling adversarial samples from safe programs data, and both models continue to improve simultaneously.
 
-We have a theoretical understanding of why the symmetric GAN training should converge to the Nash equilibrium. We noticed that our asymmetric GAN traning has a lot higher gradient and so trianing happens much more quickly at start. Although theoretically there is a chance that the training might not converge at all, we empirically show that with the right stopping criteria, the trained model performs better than symmetric GAN training. 
-But our dreadful sacrifice leads to significant improvement in accuracy.
+% We have a theoretical understanding of why the symmetric GAN training should converge to the Nash equilibrium. We noticed that our asymmetric GAN traning has a lot higher gradient and so trianing happens much more quickly at start. Although theoretically there is a chance that the training might not converge at all, we empirically show that with the right stopping criteria, the trained model performs better than symmetric GAN training. 
+% But our dreadful sacrifice leads to significant improvement in accuracy.
 
+
+\subsection{}
 %A conditional GAN allows us to direct the generator to synthesize the adversarial example we want.
+
 
 Although we could control the domain of example our GAN learned to emulate by our selection of the training dataset, we could not specify any of the characteristics of the data samples it is going to generate. GAN could synthesize realistic looking handwritten digits but we can not control what digits it produces.
 
