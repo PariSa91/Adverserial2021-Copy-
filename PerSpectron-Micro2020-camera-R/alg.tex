@@ -19,17 +19,62 @@ for generator is to maximize the probability of discriminator
 making a mistake~\cite{goodfellow2014generative}.
 
 
-Instead of recognising the pattern, the Generator learns to create them essentially from scratch; indeed, the input into the Generator is often no more than a vector of random numbers.  The Generator learns through the feedback it receives from the discriminator's classification. The discriminator's goal is to determine whether a particular example is coming from the training dataset or created by the Generator.
- 
- 
-Accordingly, each time the discriminator is fooled into classifying an adversarial attack as safe, the generator knows it did something well. Conversely each time the discriminator correctly rejects a generator-produced adversarial as attack, the generator receives the feedback that it needs to improve.
-The discriminator continues to improve as well. Like any classifier, it learns from how far its predictions are from the true class (safe or suspicious). So, as the generator gets better at producing realistic adversarial sample, the discriminator gets better at telling adversarial samples from safe programs data, and both models continue to improve simultaneously.
+% The Generator learns through the feedback it receives from the discriminator's classification. 
+% The discriminator's goal is to determine whether a particular example is coming from the training dataset or created by the Generator. 
+% %Instead of recognising the pattern, the Generator learns to create them essentially from scratch; indeed, the input into the Generator is often no more than a vector of random numbers.
+%  Accordingly, each time the discriminator is fooled into classifying a generated sample, the generator knows it did something well. Conversely each time the discriminator  rejects an adversarial attack, the generator receives the feedback that it needs to improve.
+% The discriminator continues to improve as well. Like any classifier, it learns from how far its predictions are from the true class. 
+% So, as the generator gets better at producing realistic adversarial sample, the discriminator gets better at telling adversarial samples from original data, and both models continue to improve simultaneously. 
+
+%GAN is a type of neural network that is able to generate realistic new data from scratch. 
+GANs have shown to produce impressive images of faces, bedrooms, or birds, etc.,~\cite{}, which have never been seen. Note that GAN does not sample the closest point or the average or the best fit to a dataset. They are not maximizing likelyhood of single samples, but they are minimizing the overall distance between the seen data and the generated data.  Indeed GANs should be able to produce whatever data that it is trained to generate. However, it has never been shown to be applied in microarchitecture design. We will use GANs as part of our design to train and improve the accuracy of our hardware detector.  
 
 % We have a theoretical understanding of why the symmetric GAN training should converge to the Nash equilibrium. We noticed that our asymmetric GAN traning has a lot higher gradient and so trianing happens much more quickly at start. Although theoretically there is a chance that the training might not converge at all, we empirically show that with the right stopping criteria, the trained model performs better than symmetric GAN training. 
 % But our dreadful sacrifice leads to significant improvement in accuracy.
 
 
-\subsection{}
+\subsection{{\scheme} Architecture}
+
+{\scheme} uses a deep neural network (DNN) as generator and PerSpectron,  as the discriminator.  GANs~\cite{goodfellow2014generative} use convolutional neural
+networks (CNNs) in both the discriminator and the generator
+architecture of GAN.  The DNN and PerSpectron play an
+adversarial game. We introduce this architecture as an {\em asymmetric GAN}, in which a one layer neural network with large number of detailed microarchitectural features, tries to determine whether a particular example is coming from the training dataset or created by the DNN. 
+
+The DNN learns through the feedback it receives from the PerSpectron's classification. 
+
+ Accordingly, each time the PerSpectron is fooled into classifying a generated sample, the DNN knows it did something well.Instead of recognising the pattern, the DNN learns to create them essentially from scratch; indeed, the input into the DNN is mainly a vector of random numbers.  Conversely each time the discriminator  rejects an adversarial attack, the generator receives the feedback that it needs to improve.
+ 
+ 
+ 
+
+The discriminator's goal is to 
+%Instead of recognising the pattern, the Generator learns to create them essentially from scratch; indeed, the input into the Generator is often no more than a vector of random numbers.
+ Accordingly, each time the discriminator is fooled into classifying a generated sample, the generator knows it did something well.
+ 
+The discriminator continues to improve as well. Like any classifier, it learns from how far its predictions are from the true class. 
+So, as the generator gets better at producing realistic adversarial sample, the discriminator gets better at telling adversarial samples from original data, and both models continue to improve simultaneously. 
+
+
+The equation
+of loss function is given by [min max equation]. 
+
+
+
+
+% The Generator learns through the feedback it receives from
+% the discriminator’s classification. The discriminator’s goal is
+% to determine whether a particular example is coming from the
+% training dataset or created by the Generator. Accordingly, each
+% time the discriminator is fooled into classifying a generated
+% sample, the generator knows it did something well. Conversely
+% each time the discriminator rejects an adversarial attack, the
+% generator receives the feedback that it needs to improve. The
+% discriminator continues to improve as well. Like any classifier,
+% it learns from how far its predictions are from the true class. So,
+% as the generator gets better at producing realistic adversarial
+% sample, the discriminator gets better at telling adversarial
+% samples from original data, and both models continue to
+% improve simultaneously.
 %A conditional GAN allows us to direct the generator to synthesize the adversarial example we want.
 
 
@@ -97,7 +142,7 @@ The generator's weights and biases are updated to maximize the probability that 
 For each training iteration
 (a) Get a new random noise z and using the generator network, synthesize fake example $x^{\star}$. (b) Use discriminator network to classify $x^{\star}$. (c) Compute the classification error and backpropogate the error to update the generators trainable parameters, seeking to maximize the discriminator's error. 
 
-GANs reaching Nash equilibrium when the following conditions are met generator produces fake examples that are not distinguishable from the real data in the training dataset. The discriminator can at best randomly. The discriminator can at best randomly guess whether a particular example is fake or real.  
+% GANs reaching Nash equilibrium when the following conditions are met generator produces fake examples that are not distinguishable from the real data in the training dataset. The discriminator can at best randomly. The discriminator can at best randomly guess whether a particular example is fake or real.  
 
  
 \subsection{Adversarial Perceptron Learning With Dynamic Feature Transformation}
