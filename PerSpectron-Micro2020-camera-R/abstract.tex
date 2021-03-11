@@ -1,15 +1,24 @@
 \begin{abstract}
 Microarchitectural attack detection in hardware is attracting
-more and more research interests.  It has plenty of general advantages over software detection, including minimal performance overhead, access to a larger set of detailed microarchitectural features and  higher robustness to bandwidth mimicry evasion. Use of machine learning in hardware enables detection before leakage which is critical. However,  the science of defenses against adversarial machine learning attacks are somewhat less
-well developed. This is the main reason for low confidence in
+more and more research interests.  It has plenty of general advantages over software detection, including minimal performance overhead, access to a larger set of detailed microarchitectural features, and greater robustness to bandwidth mimicry evasion. The use of machine learning in hardware enables detection before leakage, which is quintessential. 
+However,  defenses for hardware detectors against adversarial machine learning attacks are somewhat less
+well developed, causing low confidence in
 ML-based detection systems in hardware against microarchitectural attacks.
 
-Training a classification model on augmenting adversarial examples has shown to almost always improve the accuracy of the classifier. We show the challenges of adversarial example generation against  microarchitectural attack detection system.
-Most adversarial example generation strategies in malware are based on developing an dynamic system that extrapolates
-appropriate perturbations from benign data and adds them back onto those data based on the reverse engineered model, to turn into adversarial
-examples.  As a consequence of
+In this paper, we propose a non-injection and non-perturbation base transformation framework that generates microarchitectural attack samples 
+from class conditioned generative adversarial networks.
+Training a classification model on augmented adversarial examples has almost always improved the classifier's accuracy. 
+Most adversarial example generation strategies in malware are based on developing a dynamic system that extrapolates
+appropriate perturbations from benign data and adds them back onto those data based on the reverse-engineered model. We show that augmenting  examples generated from conventional approaches, does not improve the detector resiliency against adversarial machine learning attacks.
+Due to
 perturbing from existing malware, the generated attacks resemble their unperturbed version, which is
-not rigorously proved to fool hardware detectors yet obviously limit the adversarial diversity. We show that augmenting those examples in training does not improve the detector resiliency. We propose {\scheme} a novel technique based on generative adversarial network theory~\cite{goodfellow2014generative} by training a perceptron based detector by a Deep Neural Network as a generator in software.  Our final design is amenable to hardware. 
+not rigorously proved to fool hardware detectors yet obviously limit the adversarial diversity.
+ We overcome this problem with {\scheme}, a novel perceptron learning technique based on generative adversarial network theory~\cite{goodfellow2014generative} in which a perceptron-based detector is set up to play an adversarial game against a Deep Neural Network.  
+ 
+ We then introduce dynamic perceptron weight clipping during adversarial training which ensures that the model does not rely on specific
+features or unit of pipeline and to reduce the transferability of
+the final classification parameter. Our final design significantly improves accuracy over state-of-art hardware detector for microarchitectural attacks (PerSpectron) with no extra hardware and performance overhead. Since perceptron has already been implemented in modern processors, 
+our final design is readily amenable to hardware. 
 
 %Traditional  approaches can be roughly split into to two classes, i
 

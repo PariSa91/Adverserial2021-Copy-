@@ -3,7 +3,7 @@
 %\subsection{Game setup}
 
  The microarchitectural attack detection model {\em e.i.,} PerSpectron, learns the patterns of suspicious and safe activity in a program to discern an attacks footprints.
-When generating handcrafted adversarial attacks, our goal was to produce a program that capture the characteristics of the training dataset {\em i.e., } of safe programs in hardware, so that the attacks it generates look indistinguishable from the training safe data in the eyes of PerSpectron. Thus our goals as an attacker can be thought of as PerSpectron's goal in reverse. That implies that there is game setup between our model's goal and the attackers. Our design is inspired by Generative Modeling Theory specifically GANS~\cite{goodfellow2014generative}.We first discuss the theory behind GANs and then describe our design.  
+When generating handcrafted adversarial attacks, our goal was to produce a program that capture the characteristics of the training dataset {\em i.e., } of safe programs in hardware, so that the attacks it generates look indistinguishable from the training safe data in the eyes of PerSpectron. Thus our goals as an attacker can be thought of as PerSpectron's goal in reverse. That implies that there is a game setup between our model's goal and the attackers. Our design is inspired by Generative Modeling Theory specifically GANS~\cite{goodfellow2014generative}.We first discuss the theory behind GANs and then describe our design.  
 
 
 \subsection{Generative Modeling Theory}
@@ -35,28 +35,19 @@ GANs have shown to produce impressive images of faces, bedrooms, or birds, etc.,
 
 \subsection{{\scheme} Architecture}
 
-{\scheme} uses a deep neural network (DNN) as generator and PerSpectron,  as the discriminator.  GANs~\cite{goodfellow2014generative} use convolutional neural
+{\scheme} uses a deep neural network (DNN) as generator and PerSpectron,  as the discriminator. This differs with original  GANs~\cite{goodfellow2014generative} which uses same convolutional neural
 networks (CNNs) in both the discriminator and the generator
 architecture of GAN.  The DNN and PerSpectron play an
-adversarial game. We introduce this architecture as an {\em asymmetric GAN}, in which a one layer neural network with large number of detailed microarchitectural features, tries to determine whether a particular example is coming from the training dataset or created by the DNN. 
+adversarial game. We introduce this architecture as an {\em asymmetric} GAN, in which a one layer neural network with large number of detailed microarchitectural features, tries to determine whether a particular example is coming from the training dataset or created by the DNN. 
 
 The DNN learns through the feedback it receives from the PerSpectron's classification. 
+ Accordingly, each time the PerSpectron is fooled into classifying a generated sample, the DNN knows it did something well. Instead of recognising the pattern, the DNN learns to create them essentially from scratch; indeed, the input into the DNN is mainly a vector of random numbers and labels which we describe in next section.  Conversely each time the PerSpectron  rejects an adversarial attack, the DNN receives the feedback that it needs to improve.
 
- Accordingly, each time the PerSpectron is fooled into classifying a generated sample, the DNN knows it did something well.Instead of recognising the pattern, the DNN learns to create them essentially from scratch; indeed, the input into the DNN is mainly a vector of random numbers.  Conversely each time the discriminator  rejects an adversarial attack, the generator receives the feedback that it needs to improve.
- 
- 
- 
-
-The discriminator's goal is to 
-%Instead of recognising the pattern, the Generator learns to create them essentially from scratch; indeed, the input into the Generator is often no more than a vector of random numbers.
- Accordingly, each time the discriminator is fooled into classifying a generated sample, the generator knows it did something well.
- 
-The discriminator continues to improve as well. Like any classifier, it learns from how far its predictions are from the true class. 
-So, as the generator gets better at producing realistic adversarial sample, the discriminator gets better at telling adversarial samples from original data, and both models continue to improve simultaneously. 
+The PerSpectron continues to improve as well. Like any classifier, it learns from how far its predictions are from the true class. 
+So, as the DNN generator gets better at producing realistic adversarial samples, the PerSpectron gets better at telling generated samples from original data, and both models continue to improve simultaneously. 
 
 
-The equation
-of loss function is given by [min max equation]. 
+%The equation of loss function is given by [min max equation]. 
 
 
 
@@ -77,19 +68,25 @@ of loss function is given by [min max equation].
 % improve simultaneously.
 %A conditional GAN allows us to direct the generator to synthesize the adversarial example we want.
 
+ 
+ In simple GAN, you have no control on what category of sample input will get produced. There is no way to direct the Generator to synthesize say an attack or safe program sample. Let alone other features such as the type of covert channel such as Flush+Reload or Flush+Flush.
+With this architecture we could only control the class of examples that our DNN learned to emulate by our selection of the training samples {\em i.e., safe or suspicious}. But we could not specify any of the characteristics of the microarchitectural samples it is going to generate. Another words, GAN framework could synthesize realistic looking microarchitectural footprints of programs, but it can not control what channel type or phases of attack it produces.
 
-Although we could control the domain of example our GAN learned to emulate by our selection of the training dataset, we could not specify any of the characteristics of the data samples it is going to generate. GAN could synthesize realistic looking handwritten digits but we can not control what digits it produces.
-
+% GANs are capable of producing examples ranging from simple handwritten digits to photo-realistic images of human faces. However, although we could control the domain of examples our DNN learned to emulate by our selection of the training dataset. we could not specify any of the characteristics of the data samples the gan would generate. We could not control whether it would produce, say a new sample of adversarial meltdown attack. 
+ 
+ In image recognition, this concern may seem trivial. Because if the goal is to generate number 9, you can just keep generating until you get the number you want. However, for a domain of microarchitectural attacks the domain of possible answers gets too large for such a brute-force solution to be practical. So we need a controlling mechanism.
 
 
 
  \subsection{Training with Data Transmit And Recovery Channel Control}
- GANs are capable of producing examples ranging from simple handwritten digits to photo-realistic images of human faces. However, although we could control the domain of examples our GAN learned to emulate by our selection of the training dataset. we could not specify any of the characteristics of the data samples the gan would generate. We could not control whether it would produce, say a new sample of adversarial meltdown attack. In image recognition, this concern may seem trivial. Because if the goal is to generate number 9, you can just keep generating until you get the number you want. However, for a domain of microarchitectural attacks the domain of possible answers gets too large for such a brute-force solution to be practical. In simple GAN, you have no control on what category of sample input will get produced. There is no way to direct the Generator to synthesize say an attack or safe program sample. Let alone other features such as the type of covert channel such as Flush+Reload or Flush+Flush.
  
- Our design has the ability to decide what kind of adversarial microarchitectural attack will be generated. We could enter the descriptive features of attacks atomic tasks' samples into the generator and have it output a range of samples matching the criteria. It can greatly expedite the process of adversarial attack generation. We are sure there are many other practical applications where the ability to generate new attack sample that matches the channel type of our choice would a game changer. The CGAN was one of the first GAN innovations that made data generation possible. 
  
- CGAN is a generative adversarial learning whose generative and discriminator are conditioned during training by using some additional information e.g., labels. 
- The generator learns to produce realistic examples for each label in the training dataset and the discriminator learns to distinguish fake example-label pair from real-example pairs.   
+ Our design has the ability to decide what kind of adversarial microarchitectural attack will be generated. We could enter the descriptive features of attacks atomic tasks' samples into the generator and have it output a range of samples matching the criteria. It can greatly expedite the process of adversarial attack generation. \footprint{We are sure there are many other practical applications where the ability to generate new microarchitectural sample that matches the input executive type of our choice would a game changer}. 
+ 
+%   The CGAN was one of the first GAN innovations that made data generation possible
+ To do that we leverage CGAN~\cite{cgan}. CGAN is a generative adversarial learning whose generative and discriminator are conditioned during training by using some additional information e.g., labels. 
+ 
+ Our DNN generator learns to produce realistic microarchitectural footprint examples for each label in the training dataset and the PerSpectron learns to distinguish fake footprint-label pair from real-example pairs.   
  in contrast to a design where the Disriminator learns to assign a correct label to each real example in addition to distinguashing real example from fake, the discriminator does not learn to identify which class is which.  It learns to accept real matching pair while rejecting pairs that are mistmatched and pairs in which there are fake. 
  
  Accordingly in order to fool the discriminator it is not enough for the CGAN generator to produce realistic looking data. The example it generates also need to match their labels. After the generator is fully trained, this then allows us to specify what attack type we want the CGAN to synthesize by passing it the desired label. 
@@ -161,3 +158,4 @@ detection.
 Our weight clipping is very simple. We first group the microarchitectural features into mutually correlated sets {\em e.i.,} one feature per component of pipeline and uncore units. During training we add a layer between generator and discriminator. This layer chooses one feature from each group and sets the corresponding weight output values from the generator to zero.
 
 Incredibly, this simple addition drastically improves accuracy on adversarial attacks, by ensuring that network doesn't become overdependant on certain units or groups of features that in effect just remember observation from training set. With weight clipping perceptron can not rely too much on any one units or features of the processor. Therefore, perceptron weight updates are more evenly distributed throughout the adversarial training. This makes perceptron learning much better at generalizing to unseen attacks, because the PerSpectron has been trained to produce accurate predictions even under unfamiliar conditions, such as those caused by dropping a highly correlated feature. At test time the weight clipping layer doesn't remove any weight so that the full Perceptron is used for prediction. 
+\subsection{Adaptive Retraining}
