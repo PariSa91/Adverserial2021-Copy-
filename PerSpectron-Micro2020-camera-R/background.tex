@@ -1,5 +1,5 @@
-\section{Background and Motivation}\label{background}\label{motiv}
-
+\section{Background and Motivation}\label{background}
+\label{motiv}
 \subsection{Microarchitectural Attacks}
 
 \subsection{Perceptron and Microarchitectural Features}
@@ -24,9 +24,11 @@ in the Fetch stage. The squashed cycles in each stage, all the ROB, IQ, and
 Register full events, undone maps in the Rename stage, and memory order 
 violation in the IEW stage propagate back to the Fetch stage. The relationship 
 between these events' Fetch is not a simple cumulative function in an out-of-order 
-processor. PerSpectron showed that because the formation about attacks moves around the
+processor. }. 
+PerSpectron showed that because the formation about attacks moves around the
 processor, mutually correlated features of all components of processors should be included in the feature set in order to detect new variations of attacks.However, features such as \textit{fetch.MiscStallCycle} capture the 
-relationship.}. The result was competitive 
+relationship.
+The result was competitive 
 with a more complex deepNN that is not easily implementable in hardware.
 
 % \subsection{Feature selection}

@@ -32,7 +32,16 @@ GANs have shown to produce impressive images of faces, bedrooms, or birds, etc.,
 % We have a theoretical understanding of why the symmetric GAN training should converge to the Nash equilibrium. We noticed that our asymmetric GAN traning has a lot higher gradient and so trianing happens much more quickly at start. Although theoretically there is a chance that the training might not converge at all, we empirically show that with the right stopping criteria, the trained model performs better than symmetric GAN training. 
 % But our dreadful sacrifice leads to significant improvement in accuracy.
 
+ In simple GAN, you have no control on what category of sample input will get produced. There is no way to direct the Generator to synthesize say an attack or safe program sample. Let alone other features such as the type of covert channel such as Flush+Reload or Flush+Flush.
+With this architecture we could only control the class of examples that our DNN learned to emulate by our selection of the training samples {\em i.e., safe or suspicious}. But we could not specify any of the characteristics of the microarchitectural samples it is going to generate. Another words, GAN framework could synthesize realistic looking microarchitectural footprints of programs, but it can not control what channel type or phases of attack it produces.
 
+% GANs are capable of producing examples ranging from simple handwritten digits to photo-realistic images of human faces. However, although we could control the domain of examples our DNN learned to emulate by our selection of the training dataset. we could not specify any of the characteristics of the data samples the gan would generate. We could not control whether it would produce, say a new sample of adversarial meltdown attack. 
+ 
+ In image recognition, this concern may seem trivial. Because if the goal is to generate number 9, you can just keep generating until you get the number you want. However, for a domain of microarchitectural attacks the domain of possible answers gets too large for such a brute-force solution to be practical. So we need a controlling mechanism.
+
+ 
+ {\scheme} has the ability to decide what kind of adversarial microarchitectural attack will be generated. We can enter the descriptive features of attacks atomic tasks' samples into our DNN generator and have it output a range of samples matching the criteria. It can greatly expedite the process of adversarial attack generation~\footnote{We are sure there are many other practical applications where the ability to generate new microarchitectural sample that matches the input executive type of our choice would a game changer.}.
+ 
 \subsection{{\scheme} Architecture}
 
 {\scheme} uses a deep neural network (DNN) as generator and PerSpectron,  as the discriminator. This differs with original  GANs~\cite{goodfellow2014generative} which uses same convolutional neural
@@ -69,29 +78,23 @@ So, as the DNN generator gets better at producing realistic adversarial samples,
 %A conditional GAN allows us to direct the generator to synthesize the adversarial example we want.
 
  
- In simple GAN, you have no control on what category of sample input will get produced. There is no way to direct the Generator to synthesize say an attack or safe program sample. Let alone other features such as the type of covert channel such as Flush+Reload or Flush+Flush.
-With this architecture we could only control the class of examples that our DNN learned to emulate by our selection of the training samples {\em i.e., safe or suspicious}. But we could not specify any of the characteristics of the microarchitectural samples it is going to generate. Another words, GAN framework could synthesize realistic looking microarchitectural footprints of programs, but it can not control what channel type or phases of attack it produces.
 
-% GANs are capable of producing examples ranging from simple handwritten digits to photo-realistic images of human faces. However, although we could control the domain of examples our DNN learned to emulate by our selection of the training dataset. we could not specify any of the characteristics of the data samples the gan would generate. We could not control whether it would produce, say a new sample of adversarial meltdown attack. 
- 
- In image recognition, this concern may seem trivial. Because if the goal is to generate number 9, you can just keep generating until you get the number you want. However, for a domain of microarchitectural attacks the domain of possible answers gets too large for such a brute-force solution to be practical. So we need a controlling mechanism.
 
 
 
  \subsection{Training with Data Transmit And Recovery Channel Control}
  
- 
- Our design has the ability to decide what kind of adversarial microarchitectural attack will be generated. We could enter the descriptive features of attacks atomic tasks' samples into the generator and have it output a range of samples matching the criteria. It can greatly expedite the process of adversarial attack generation. \footprint{We are sure there are many other practical applications where the ability to generate new microarchitectural sample that matches the input executive type of our choice would a game changer}. 
- 
-%   The CGAN was one of the first GAN innovations that made data generation possible
- To do that we leverage CGAN~\cite{cgan}. CGAN is a generative adversarial learning whose generative and discriminator are conditioned during training by using some additional information e.g., labels. 
+
  
  Our DNN generator learns to produce realistic microarchitectural footprint examples for each label in the training dataset and the PerSpectron learns to distinguish fake footprint-label pair from real-example pairs.   
- in contrast to a design where the Disriminator learns to assign a correct label to each real example in addition to distinguashing real example from fake, the discriminator does not learn to identify which class is which.  It learns to accept real matching pair while rejecting pairs that are mistmatched and pairs in which there are fake. 
+ in contrast to a design where the Disriminator learns to assign a correct label to each real example in addition to distinguishing real example from fake, the discriminator does not learn to identify which class is which.  It learns to accept real matching pair while rejecting pairs that are mistmatched and pairs in which there are fake. 
  
  Accordingly in order to fool the discriminator it is not enough for the CGAN generator to produce realistic looking data. The example it generates also need to match their labels. After the generator is fully trained, this then allows us to specify what attack type we want the CGAN to synthesize by passing it the desired label. 
  
- The generator uses the noise vector and label to synthesize a fake example (x given that or conditioned on y). The goal of this fake example is to look in the eyes of Discriminator as close as possible to a real example for the given label.  
+ The generator uses the noise vector and label to synthesize an adversarial example (x given that or conditioned on y). The goal of this fake example is to look in the eyes of Discriminator as close as possible to a real example for the given label.  
+ 
+ Our solution is inspired by CGAN~\cite{cgan}. CGAN is a generative adversarial learning whose generative and discriminator are conditioned during training by using some additional information e.g., labels. The CGAN was one of the first GAN innovations that made data generation possible. 
+ 
  
  
  
