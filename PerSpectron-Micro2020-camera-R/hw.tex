@@ -1,1 +1,22 @@
 \subsection{Hardware Design}
+Regardless of the order
+and the position of each feature, the k-sparse representation
+are distinctive, and only contain 0/1 values
+% {\small
+% \begin{align*}
+% \vspace{0.05in}
+% \tiny{[f1 = ReadResp, 
+%  f2 = commitNonSpecStalls, 
+%  f3 = PendingQuiesceStallCycles, 
+%  f4 = CleanEvict]}
+% \end{align*}}
+% {\small
+% \begin{align*}
+% suspicious: <0,1,0,0> \\
+% suspicious: <1,0,1,0> \\
+% suspicious: <0,0,0,1>  \\ 
+% safe: <1,1,0,0> 
+% \end{align*}
+% }
+ Computing the perceptron output. Multiplication is not necessary to compute the dot product. Simply add the weight when the input bit is 1 and subtract when bit is -1. Only the sign bit of the result is needed to make a prediction. Prediction happens in hardware and in parallel to the execution.
+No additional overhead for hardware counters. Hundreds of counters are included (for debug and verification). Simpler than perceptron-based branch predictors used in mobile CPUs (see e.g. the Samsung Exynos paper in ISCA2020).

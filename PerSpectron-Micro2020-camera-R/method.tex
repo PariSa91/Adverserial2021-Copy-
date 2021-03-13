@@ -7,6 +7,45 @@ of attacks, and safe programs.
 % our dataset was too small for effective training, we incorporated classic augmentation for the training process. We employed the DCGAN architecture to train each  class separately, using the same 3-fold cross validation process and the
 % same data partition. 
 
+The GAN model we used is a variation of Deep Convolutions GAN. We had to adjust the dimensions of hidden layers and the dimensions of the output from the Generator and input into the Discriminator PerSpectron. Then we used the trained PerSpectron to classify unseen test set.  
+
+Training dataset-- The dataset of all safe programs and real attacks that we want the generator to learn to emulate with near-perfect quality. This dataset serves as input($x$) to the generator network. 
+
+Random noise vector-- The raw input ($z$) to the Generator network. This input is a vector of random numbers that the generator uses as a starting point for generating adversarial examples. 
+
+Discriminator network-- The discriminator takes as input either the real examples ($x$) coming from the training set or an adversarial example $x^{\star}$ produced by the generator. For each example, the discriminator determines and outputs the probability of whether the example is adversarial.
+
+Iterative training/tuning--For each of the discriminators predictions, we determine how good it is--much as we would for a regular classifier-- and use results to attractively tune the discriminator and the generator networks through backpropogation; the discriminator's weights and biases are updated to maximize its classification and accuracy ( maximizing the probability of correct prediction: ($x$) as attack and $x^{\star}$ is safe. 
+The generator's weights and biases are updated to maximize the probability that the discriminator missclassifies $x^{\star}$ as safe program. 
 
 
 
+\begin{table}[!htbp]
+\small
+\centering
+\begin{tabular}{|c|}
+\hline
+\textbf{Architecture}  \\ \hline
+X86 O3CPU 1 core Single Thread at 2.0GHz \\ \hline
+
+\textbf{Core}  \\ \hline
+Tournament branch predictor\\
+16 RAS entries, 4096 BTB entries\\
+LQEntries=32, SQEntries=32, ROBEntries=192\\
+fetch/dispatch/issue/commit width=8\\
+numPhysIntRegs=256,numPhysFloatRegs=256 \\ \hline
+
+\textbf{L1 I-Cache}  \\ \hline
+32KB, 64B line, 4-way \\ \hline
+
+\textbf{L1 D-Cache}  \\ \hline
+64KB, 64B line, 8-way \\ \hline
+
+\textbf{Shared L2 cache}  \\ \hline
+2MB bank, 64B line, 8-way,  \\
+mshrs=20, tgtsPerMshr=12, writeBuffers=8  \\ 
+tagLatency=20, dataLatency=20, responseLatency=20\\ \hline
+\end{tabular}
+\caption{Parameters of simulated architecture}
+  \label{table:GEM5}
+\end{table}
