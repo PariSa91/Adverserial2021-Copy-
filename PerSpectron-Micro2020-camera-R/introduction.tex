@@ -39,7 +39,7 @@ Detection in hardware also allows the predictor to efficiently use and monitor a
 used by malware to evade signature based detectors~\cite{PaulKocher,paulKocherSpectreAttacks} and are accessible from hardware. 
 
 The ability to use high number of features in hardware without incurring performance overhead makes adversarial machine learning attacks
-described in prior hardware malware detector is potentially prohibitively expensive against hardware detectors.
+described in prior hardware malware detector to be potentially prohibitively expensive against hardware detectors.
 However, few studies have conclusively studied methods to increase robustness of  microarchitectural attack detectors in hardware against adversarial machine learning attacks. 
 
 
@@ -61,7 +61,7 @@ Insertion of instructions should not interfere with attacks atomic tasks or othe
 
 Forth,  
 typical data augmentation technique using program synthesizers has many limitations to be used as adversarial example. For one, small modifications yields examples that do not diverge far from the original program. As a result, the additional examples do not add much variety to help the algorithm learn to generalize. In the case of microarchitectural attack detection, we want to see leakage happens using different technique, not just permutations of the same underlying attack.
-In the case of microarchitectural attack detection, we want different examples of the same underlying vulnerability. Enriching a dataset with synthetic examples such as those produced by Generative Adversarial Networks (GANs)~\cite{goodfellow2014generative}(described in section~\ref{overview}), has potential to further enrich the available data beyond traditional augmentation techniques. That is precisely our first goal to investigate. 
+In the case of microarchitectural attack detection, we want different examples of the same underlying vulnerability. Enriching a dataset with synthetic examples such as those produced by Generative Adversarial Networks (GANs)~\cite{goodfellow2014generative}(described in section~\ref{overview}), has potential to further enrich the available data beyond traditional augmentation techniques. While the recent advances in deep generative models~\cite{goodfellow2014generative} have brought a rapid progress in image recognition~\cite{}, relatively no progress have been made in microarchitectural design models. We believe this is due in part to hardware constraints {\em e.g., area, power, latency and performance overhead}. GANs are usually made of Convolutions Neural Network (CNNs), CNNs are not easily amenable in hardware. In our knowledge, no method has been shown previously to train a hardware friendly ML-based model  That is precisely our first goal to investigate. 
 
  \samira {Add dynamic model transformation motive here }
  
@@ -81,8 +81,9 @@ design of hardware detectors for microarchitectural attacks.
 
 \item We show that data augmentation using common program synthesizer does not improve the accuracy of detection, but training on adversarial examples significantly improves the accuracy of hardware detection for microarhitectural attacks. 
 
-\item We design the first asymmetric  adversarial perceptron training, in which a one layer neural network that is amenable in hardware, can be trained by a more complex deep neural network in software.
-\vspace{2mm}
+\item We design the first asymmetric  adversarial perceptron training, in which a one layer neural network that is amenable in hardware, can be trained  by a more complex deep neural network in software to detect adversarial machine learning attacks.
+%\vspace{2mm}
+
 
 \item We use the trained perceptron and a novel weight clipping technique to produce \scheme{} which (1) significantly improves detection accuracy for broad range of microarchitectural attacks against evasive and adversarial machine learning attacks, and (2) it can be built in hardware with minimal performance and area overhead. 
 \end{enumerate}

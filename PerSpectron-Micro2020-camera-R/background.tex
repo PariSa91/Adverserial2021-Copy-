@@ -2,34 +2,34 @@
 \label{motiv}
 \subsection{Microarchitectural Attacks}
 
-\subsection{Perceptron and Microarchitectural Features}
+% \subsection{Perceptron and Microarchitectural Features}
 
  
 
 
-Neural network models used in software detectors, feature deep multi-layered  networks ({\em e.g.} RNN) are not easily amenable to hardware due to design and runtime complexity. But Perceptron learning has shown to be implementable in hardware for various  applications including branch prediction, prefetching, replacement policies, and CPUadaptation~\cite{intelISCA2019}. Recent microarchitectures from Oracle~\cite{SPARCT4}, AMD ({\em e.g.} Bobcat, Jaguar, Piledriver, Zen, etc.), and Samsung~\cite{Mongoose,M3} are documented as featuring perceptron-based branch predictors.
+% Neural network models used in software detectors, feature deep multi-layered  networks ({\em e.g.} RNN) are not easily amenable to hardware due to design and runtime complexity. But Perceptron learning has shown to be implementable in hardware for various  applications including branch prediction, prefetching, replacement policies, and CPUadaptation~\cite{intelISCA2019}. Recent microarchitectures from Oracle~\cite{SPARCT4}, AMD ({\em e.g.} Bobcat, Jaguar, Piledriver, Zen, etc.), and Samsung~\cite{Mongoose,M3} are documented as featuring perceptron-based branch predictors.
 
 
-% Hinton~\cite{Hinton1985shape} 
-% finds that using the entire space of possible features in the 
-% training set made the 
-% mapping from the features’ instantiation parameters to the
-% object’s instantiation parameters became {\em linear} allowing the use of a simpler architecture, which could efficiently 
-% handle more complex images.   Similarly 
-In this work we laverage PerSpectron which is a  hardware detector for microarchitectural attacks which uses a simple one layer neural network,  allowing the use of a simpler architecture, which could efficiently 
-handle more complex footprints of attacks.
-PerSpectron~\cite{PerSpectron} found 106 microarchitectural features that when included in training, it could map a non-linearly separable problem to linear, which was then 
-separable by {\em perceptron} and is readily implementable in hardware~\footnote{An example of such feature is the effect of misses and stalls 
-in the Fetch stage. The squashed cycles in each stage, all the ROB, IQ, and 
-Register full events, undone maps in the Rename stage, and memory order 
-violation in the IEW stage propagate back to the Fetch stage. The relationship 
-between these events' Fetch is not a simple cumulative function in an out-of-order 
-processor. }. 
-PerSpectron showed that because the formation about attacks moves around the
-processor, mutually correlated features of all components of processors should be included in the feature set in order to detect new variations of attacks.However, features such as \textit{fetch.MiscStallCycle} capture the 
-relationship.
-The result was competitive 
-with a more complex deepNN that is not easily implementable in hardware.
+% % Hinton~\cite{Hinton1985shape} 
+% % finds that using the entire space of possible features in the 
+% % training set made the 
+% % mapping from the features’ instantiation parameters to the
+% % object’s instantiation parameters became {\em linear} allowing the use of a simpler architecture, which could efficiently 
+% % handle more complex images.   Similarly 
+% In this work we laverage PerSpectron which is a  hardware detector for microarchitectural attacks which uses a simple one layer neural network,  allowing the use of a simpler architecture, which could efficiently 
+% handle more complex footprints of attacks.
+% PerSpectron~\cite{PerSpectron} found 106 microarchitectural features that when included in training, it could map a non-linearly separable problem to linear, which was then 
+% separable by {\em perceptron} and is readily implementable in hardware~\footnote{An example of such feature is the effect of misses and stalls 
+% in the Fetch stage. The squashed cycles in each stage, all the ROB, IQ, and 
+% Register full events, undone maps in the Rename stage, and memory order 
+% violation in the IEW stage propagate back to the Fetch stage. The relationship 
+% between these events' Fetch is not a simple cumulative function in an out-of-order 
+% processor. }. 
+% PerSpectron showed that because the formation about attacks moves around the
+% processor, mutually correlated features of all components of processors should be included in the feature set in order to detect new variations of attacks.However, features such as \textit{fetch.MiscStallCycle} capture the 
+% relationship.
+% The result was competitive 
+% with a more complex deepNN that is not easily implementable in hardware.
 
 % \subsection{Feature selection}
 % Unlike image information that is simple pixels, microarhitectural features are much more complex. PerSpectron includes features that capture the relationship between multiple features. Therefore no hidden layer is needed~\footnote{}. The weights associated to these features have the potential to be updated further, similar to hidden weights in RNNs.
