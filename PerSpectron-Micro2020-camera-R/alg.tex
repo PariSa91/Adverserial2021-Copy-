@@ -234,3 +234,18 @@ Incredibly, this simple addition drastically improves accuracy on adversarial at
 
 
 
+\subsection{\scheme{} Equilibrium State }
+In original GAN, because the two agents only competing against each other, it makes sense that the Generator's loss would be a negative of the discriminator. In our case a perceptron discriminator is competing against a DNN as the generator.  So far we are never given a clear set of conditions under which the training has finished in practice.
+We use a stopping criteria that significantly improve on the loss function, which are now interpret-able and provide clearer stopping criteria. We try to minimize the distance between the expectation of the real attack and the expectation of the generated distribution.  
+
+As mentioned we limit the sampling of our microarchitectural attacks to their {\em atomic tasks} the intervals in which the essential operations of attacks are being execute such as training the branch predictor, prime and probing the cache, etc.  
+
+\begin{figure}[ht!] 
+\centering
+\includegraphics[width=0.45\textwidth]{PerSpectron-Micro2020-camera-R/img/saturation.png}
+\vspace*{-4mm}
+\caption{ The y-axis is the loss function for the DNN, whereas the horizontal axis is the PerSpectron outcome for the likelihood of the generated example.  
+ % \scheme{} 
+}
+\label{fig:sature}
+\end{figure}
