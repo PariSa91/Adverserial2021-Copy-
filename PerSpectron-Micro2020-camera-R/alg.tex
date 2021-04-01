@@ -81,6 +81,15 @@ A Perceptron using invariant microarchitectural features of the pipeline can be 
  
 In the next section, we explain \scheme and propose an asymmetric GAN training Perceptron automatically for adversarial examples of microarchitectural attacks. We then explain how to control the type of adversarial microarchitectural attack sample generated, followed by a method using the knowledge from the correlations between pipeline features to adaptively train the Perceptron for adversarial examples and reduces the transferability of the Perceptron's parameters. 
 
+\begin{figure*}
+\centering
+\includegraphics[width=0.98\textwidth, height=0.4\textheight]{PerSpectron-Micro2020-camera-R/img/blockDiagram.png}
+
+\caption{\scheme{}  }
+
+\label{fig:algdiagram}
+\end{figure*}
+
 \subsection{{\scheme} Architecture}
 
 {\scheme} uses a deep neural network (DNN) as generator and PerSpectron,  as the discriminator. This differs with original  GANs~\cite{goodfellow2014generative} which uses same convolutional neural
@@ -214,6 +223,8 @@ strategy and showed that it can improve the security and robustness of forensic 
 standard ML-based to mitigate the adversarial machine learning attacks ~\cite{nowroozi2020survey, secureDetection2019}.
  In this work we use removal of mutually correlated features of different components of processor to reduce the transferability of classification parameters, and increase the security of our 
 detection. 
+
+We apply adaptive feature weight elimination during adversarial training, in country to previous works which dynamically switched between different classifier. Our adaptation is embedded in Perceptrons weight from the training phase.  
 
 Our weight clipping is very simple. We first group the microarchitectural features into mutually correlated sets {\em e.i.,} one feature per component of pipeline and uncore units. During training we add a layer between generator and discriminator. This layer chooses one feature from each group and sets the corresponding weight output values from the generator to zero.
 
