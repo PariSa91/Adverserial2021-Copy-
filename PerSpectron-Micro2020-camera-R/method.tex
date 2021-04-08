@@ -1,4 +1,55 @@
 \section{Methodology}\label{method}
+We use the gem5~\cite{gem5} cycle-level simulator.
+Table~\ref{table:GEM5} gives the parameters of the simulated architecture. 
+We used the FANN C library~\cite{FANNnissen03} to implement PerSpectron to 
+work with gem5. We used the scikit-learn python library to measure the performance 
+of other machine learning models, including $K$-nearest neighbors, Decision Tree, 
+Logistic Regression, and Neural Network. 
+
+
+\noindent\textbf{Data:}  
+For speculative attacks, we simulate SpectreV1,SpectreV2, SpectreRSB, 
+Meltdown, breakingKSLR (based on Meltdown) and CacheOut attack. For cache 
+attacks, we run Flush+Flush, Flush+Reload, and Prime+Probe along with their 
+respective profiling-calibration phases. Calibration programs threshold distinguishing 
+cache hits and cache misses based on different cache attack techniques~\cite{PrimeProbe2015last,FlushReload2014Yarom, GrussFlushFlush}~\footnote{We limit the sampling of our microarchitectural attacks to their {\em atomic tasks} the intervals in which the essential operations of attacks are being executed such as training the branch predictor, filling the reorder buffer with dependent instructions, prime and probing the cache, etc.  
+}
+ 
+ 
+For benign programs, we run individual SPEC CPU 2006 applications~\cite{spec2006}. 
+The workloads include C compression programs modified to do most work in memory 
+(rather than I/O), optimization scheduling, Ethernet network simulator, high-rank 
+artificial intelligence programs, discrete event simulation, gene sequence protein 
+analysis, the A* algorithm, and more. 
+ 
+We have written an interface to gem5 that dumps statistics once every 10K, 50K, and 100K 
+instructions, and samples all event counters for each program. Using this tool, we 
+collect multi-dimensional time-series traces of applications.
+
+\noindent \textbf{Statistics:}
+We examined 1159 microarchitectural counters, including features related to 
+cycle accounting and micro-operation ($\mu$op) flow, stall decomposition, 
+precise memory access events, latency events, precise branch events, core memory 
+access events, and other core and uncore events. 
+For each event (if applicable) we measure total number, cycles, rate, average and distribution. 
+For each counter, we maintain a maximum possible value for each sampling simulation point. 
+Each statistic is normalized over the maximum value of that counter.
+
+We include events related to stalls and differentiate between types of stalls and 
+among various points in the pipeline. We differentiate between read and write 
+latency, and what came from the master ports and was forwarded to the slave 
+(requests and responses). Likewise, what came from the slave and was forwarded 
+to the master. We also examined features related to energy consumption in different 
+microarchitectural units and pipeline stages. Also tracked are complete power state 
+machine statistics such as Active, Idle, Active Power-Down, Precharge Power-Down, 
+and Self-Refresh values. 
+
+\noindent \textbf{Training and Validation:} We train the perceptrons for 1000 epochs, or 
+until the training error falls below 0.4.  
+We used 3-fold stratified splitting with randomization. The class split for each fold for 100K setting is as follows:  \\
+Class: [benign malicious]\\
+train - [4820, 1500]  | test - [2420, 740]
+
 % In all experiments and evaluations we used 3-fold cross validation with case separation at
 % the patient level and each fold contained a balanced number
 % of attacks, and safe programs.
@@ -7,8 +58,8 @@
 % % our dataset was too small for effective training, we incorporated classic augmentation for the training process. We employed the DCGAN architecture to train each  class separately, using the same 3-fold cross validation process and the
 % % same data partition. 
 
-% The GAN model we used is a variation of Deep Convolutions GAN. We had to adjust the dimensions of hidden layers and the dimensions of the output from the Generator and input into the Discriminator PerSpectron. Then we used the trained PerSpectron to classify unseen test set.  
-% We chose class conditioned GAN~\cite{} as our main frame GAN network. 
+The GAN model we used is a variation of Deep Convolutions GAN. We chose class conditioned GAN~\cite{} as our main frame GAN network. We had to adjust the dimensions of hidden layers and the dimensions of the output from the Generator and input into the Discriminator PerSpectron. Then we used the trained PerSpectron to classify unseen test set.  
+  
 % Training dataset-- The dataset of all safe programs and real attacks that we want the generator to learn to emulate with near-perfect quality. This dataset serves as input($x$) to the generator network. 
 
 % Random noise vector-- The raw input ($z$) to the Generator network. This input is a vector of random numbers that the generator uses as a starting point for generating adversarial examples. 

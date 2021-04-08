@@ -18,6 +18,12 @@ training data rather than the generator. The training procedure
 for generator is to maximize the probability of discriminator
 making a mistake~\cite{goodfellow2014generative}.
 
+% \begin{align}
+%     L(D) &= -\mathbb{E}_{u \sim p_U} [\log(1 - D(u))] -\mathbb{E}_{x,y \sim p_{X,Y}} [\log(D(G(x, y)))] %\\
+%     % L(C) &= -\mathbb{E}_{x \sim p_{X|Y=0}} [\log(1 - C(G(x, y=0)))] -\mathbb{E}_{x \sim p_{X|Y=1}} [\log(C(G(x, y=1)))] \\
+%     % L(G) &= \mathbb{E}_{x,y \sim p_{X,Y}} [\log(D(G(x, y)))] + L(C)
+% \end{align}
+
 
 % The Generator learns through the feedback it receives from the discriminator's classification. 
 % The discriminator's goal is to determine whether a particular example is coming from the training dataset or created by the Generator. 
@@ -54,6 +60,15 @@ Neural network models used in software detectors, feature deep multi-layered  ne
 % mapping from the features’ instantiation parameters to the
 % object’s instantiation parameters became {\em linear} allowing the use of a simpler architecture, which could efficiently 
 % handle more complex images.   Similarly 
+ 
+% \begin{figure}[ht!] 
+% \centering
+% \includegraphics[width=0.45\textwidth, height=0.26\textheight]{PerSpectron-Micro2020-camera-R/img/perSpectron.pdf}
+% \vspace*{-4mm}
+% \caption{ 
+% }
+% \label{fig:perspectron}
+% \end{figure}
 
 In this work we laverage PerSpectron which is a  hardware detector for microarchitectural attacks which uses a simple one layer neural network,  allowing the use of a simpler architecture, which could efficiently 
 handle more complex footprints of attacks. 
@@ -81,11 +96,11 @@ A Perceptron using invariant microarchitectural features of the pipeline can be 
  
 In the next section, we explain \scheme and propose an asymmetric GAN training Perceptron automatically for adversarial examples of microarchitectural attacks. We then explain how to control the type of adversarial microarchitectural attack sample generated, followed by a method using the knowledge from the correlations between pipeline features to adaptively train the Perceptron for adversarial examples and reduces the transferability of the Perceptron's parameters. 
 
-\begin{figure*}
+\begin{figure*}[ht!]
 \centering
-\includegraphics[width=0.98\textwidth, height=0.4\textheight]{PerSpectron-Micro2020-camera-R/img/blockDiagram.png}
+\includegraphics[width=\textwidth]{PerSpectron-Micro2020-camera-R/img/Brutus.pdf}
 
-\caption{\scheme{}  }
+\caption{\scheme{} Architecture Diagram }
 
 \label{fig:algdiagram}
 \end{figure*}
@@ -154,7 +169,7 @@ For each training iteration:
 
 %\begin{compactitem}
 \begin{itemize}  [topsep=0pt,parsep=0pt,partopsep=0pt, label={--}, leftmargin=*] %[leftmargin=*] noitemsep
-\item  The DNN takes a new random noise z and three labels: A the transmission channel type of the attack {\em i.e., meltdown-type}, A the recovery channel type of the attack {\em i.e., prime+probe-type} and the class target $t$ {\em i.e., safe or suspicious}. DNN generates an example $x^{\star}$ that strives to be both an adversarial attack (or a realistic safe program) and a convincing match for the labels $F$ and $R$.  
+\item  The DNN takes a new random noise z and three labels: A the transmission channel type of the attack {\em i.e., meltdown-type}, A the recovery channel type of the attack {\em i.e., prime+probe-type} and the class target $t$ {\em i.e., safe or suspicious}. DNN generates an example $x^{\star}$ that strives to be both an adversarial attack (or a realistic safe program) and a convincing match for the labels $TC$ and $RC$.  
 
 \item PerSpectron network classifies $x^{\star}$ into 0/1. One for matched seen sample-labels from the dataset and 0 for unmatched sample-labels and generated sample-labels.    
 
@@ -172,11 +187,12 @@ For each iteration:
 %\begin{compactitem}
 \begin{itemize} [topsep=0pt,parsep=0pt,partopsep=0pt, label={--}, leftmargin=*]
 %[labelindent=0pt]%[leftmargin=*] noitemsep
-\item We choose a seen program sample $x$ from the training dataset with its two labels: the transmission channel type $F$ of the attack {\em i.e., meltdown-type}, A the recovery channel type $R$ of the attack {\em i.e., prime+probe-type} and the class target $t$ {\em i.e., safe or suspicious}. 
+\item We choose a seen program sample $x$ from the training dataset with its two labels: the transmission channel type $TC$ of the attack {\em i.e., meltdown-type}, A the recovery channel type $RC$ of the attack {\em i.e., prime+probe-type} 
+% the class target $t$ {\em i.e., safe or suspicious}. 
  
-\item DNN gets a new random noise vector $z$ and label $F$ and $R$ and  synthesize an adversarial example  $x^{\star}$.
+\item DNN gets a new random noise vector $z$ and label $TC$ and $RC$ and  synthesize an adversarial example  $x^{\star}$.
  
-\item PerSpectron receives the seen sample example $x$ with label $F$ and $R$ and  the adversarial generated sample-label $x^{\star}$ and the labels that were used to generate them $F$ and $R$. For both examples PerSpectron outputs a probability  indicating whether the input example was a seen data from dataset, matching its label pair and  for a generated data or unmatched pairs (0/1). 
+\item PerSpectron receives the seen sample example $x$ with label $TC$ and $RC$ and  the adversarial generated sample-label $x^{\star}$ and the labels that were used to generate them $TC$ and $RC$. For both examples PerSpectron outputs a probability  indicating whether the input example was a seen data from dataset, matching its label pair and  for a generated data or unmatched pairs (0/1). 
  
 \item The classification error of PerSpectron will be computed and backpropogated  to update it's weights, seeking to minimize it's classification error. 
  
@@ -212,25 +228,30 @@ Finally, we use the augmented dataset from step 1 along with the GAN-produced ad
  
 \subsection{Adaptive Adversarial Learning}
 
-We now that many microarchitectural features are mutually correlated in different components of processors~\cite{PerSpectron}. This is due to the nature of components of pipeline, and their interleaved functionality in an out of order superscaler process. For example, \textit{IcacheSquashes}, \textit{MiscStallCycles} and \textit{PendingTrapStallCycles} 
+Prior works showed that microarchitectural features are mutually correlated in different components of processors~\cite{PerSpectron}. This is due to the nature of components of pipeline, and their interleaved functionality in an out of order superscaler processor. For example, \textit{IcacheSquashes}, \textit{MiscStallCycles} and \textit{PendingTrapStallCycles} 
 are mutually decorrelated in the fetch unit but they have high correlation with stalls 
 and traps in other components, {\em i.e.} \textit{commit.NonSpecStalls}, 
 \textit{lsq.thread0.rescheduledLoads} and \textit{dcache.blocked:no\_mshrs}. This property has been used in prior work~\cite{PerSpectron} to produce {\em replicated detectors} to improve the detection as the attack footprint moves in the pipeline.
 
 
-Many considered random feature selection
-strategy and showed that it can improve the security and robustness of forensic detectors and
-standard ML-based to mitigate the adversarial machine learning attacks ~\cite{nowroozi2020survey, secureDetection2019}.
- In this work we use removal of mutually correlated features of different components of processor to reduce the transferability of classification parameters, and increase the security of our 
+
+To improve the security and robustness of forensic detectors and
+standard ML-based to mitigate the adversarial machine learning attacks, 
+many considered random feature selection
+strategy
+~\cite{nowroozi2020survey, secureDetection2019}.
+ In this work instead of random selection of features or  dynamically switching between different classifier, we leverage  mutually correlated microarchitectural features from the replicated detectors in different components of processor to reduce the transferability of classification parameters, and increase the security of our 
 detection. 
 
-We apply adaptive feature weight elimination during adversarial training, in country to previous works which dynamically switched between different classifier. Our adaptation is embedded in Perceptrons weight from the training phase.  
+% We apply adaptive feature weight elimination during adversarial training, in country to previous works whichr. 
+Our adaptation is embedded in Perceptrons weight from the training phase.  Our adaptive training is very simple. We first group the microarchitectural features into mutually correlated sets {\em e.i.,} one feature per component of pipeline. During training we add a layer between our DNN and PerSpectron. This layer chooses one feature from each mutual group and sets the corresponding weight output values from the  generator to zero.
 
-Our weight clipping is very simple. We first group the microarchitectural features into mutually correlated sets {\em e.i.,} one feature per component of pipeline and uncore units. During training we add a layer between generator and discriminator. This layer chooses one feature from each group and sets the corresponding weight output values from the generator to zero.
+Incredibly, this simple addition drastically improves accuracy on adversarial attacks, by ensuring that network doesn't become overdependant on certain units or groups of features that in effect just remember observation from training set. With weight adaptation perceptron can not rely too much on any one units or features of the processor. Therefore, perceptron weight updates are more evenly distributed throughout the adversarial training. This makes perceptron learning much better at generalizing to unseen attacks. 
 
-Incredibly, this simple addition drastically improves accuracy on adversarial attacks, by ensuring that network doesn't become overdependant on certain units or groups of features that in effect just remember observation from training set. With weight clipping perceptron can not rely too much on any one units or features of the processor. Therefore, perceptron weight updates are more evenly distributed throughout the adversarial training. This makes perceptron learning much better at generalizing to unseen attacks, because the PerSpectron has been trained to produce accurate predictions even under unfamiliar conditions, such as those caused by dropping a highly correlated feature. At test time the weight clipping layer doesn't remove any weight so that the full Perceptron is used for prediction. 
-
-
+\begin{note}
+\scheme{} has been trained with weight clipping to produce accurate predictions on adversarial examples even under unfamiliar conditions, such as those caused by dropping a highly correlated feature.
+\end{note}
+ At test time the weight adaptation layer doesn't remove any weight so that the full Perceptron is used for prediction. 
 
 
 
@@ -238,14 +259,30 @@ Incredibly, this simple addition drastically improves accuracy on adversarial at
 In original GAN, because the two agents only competing against each other, it makes sense that the Generator's loss would be a negative of the discriminator. In our case a perceptron discriminator is competing against a DNN as the generator.  So far we are never given a clear set of conditions under which the training has finished in practice.
 We use a stopping criteria that significantly improve on the loss function, which are now interpret-able and provide clearer stopping criteria. We try to minimize the distance between the expectation of the real attack and the expectation of the generated distribution.  
 
-As mentioned we limit the sampling of our microarchitectural attacks to their {\em atomic tasks} the intervals in which the essential operations of attacks are being execute such as training the branch predictor, prime and probing the cache, etc.  
+% \begin{figure}[ht!] 
+% \centering
+% \includegraphics[width=0.49\textwidth]{PerSpectron-Micro2020-camera-R/img/Loss.png}
+% \vspace*{-4mm}
+% \caption{The generators loss decreases after several training iterations.  
+%  % \scheme{} 
+%  }
+% \label{fig:sature}
+% \end{figure}
+
+Figure~\ref{fig:sature} shows the loss value of our DNN adversarial example generator and PerSpectron-based Adversarial Discriminator. The y-axis is the loss function for the DNN and the PerSpectron outcome for the likelihood of the generated example, whereas the horizontal axis shows the adversarial training batch. After suitable number of epochs, the discriminator will have found an equilibrium that allows the generator to learn meaningful information from the discriminator. 
+
 
 \begin{figure}[ht!] 
 \centering
-\includegraphics[width=0.45\textwidth]{PerSpectron-Micro2020-camera-R/img/saturation.png}
+\includegraphics[width=0.49\textwidth]{PerSpectron-Micro2020-camera-R/img/Loss2.png}
 \vspace*{-4mm}
-\caption{ The y-axis is the loss function for the DNN, whereas the horizontal axis is the PerSpectron outcome for the likelihood of the generated example.  
- % \scheme{} 
-}
+\caption{The generators loss decreases after several training iterations. After suitable number of epochs, the PerSpectron finds an equilibrium that allows the DNN generator to learn meaningful information from the discriminator. Weight clipping during adversarial training prevents the generator to find a single observation of adversarial attack examples that always fool the PerSpectron.  }
+ 
 \label{fig:sature}
 \end{figure}
+
+
+
+
+
+

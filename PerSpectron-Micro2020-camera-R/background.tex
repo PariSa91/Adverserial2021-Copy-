@@ -1,7 +1,76 @@
 \section{Background and Motivation}\label{background}
 \label{motiv}
 \subsection{Microarchitectural Attacks}
+The following two subsections explain the attacks considered in our work. 
+We categorize them as (1) cache side-channel attacks, which exploit 
+timing differences caused by the lower latency of CPU caches 
+(compared to physical memory), and (2) speculative attacks, 
+which exploit microarchitectural vulnerabilities and leak the data 
+using the above-described side-channel attacks. 
 
+In particular, for cache side-channel attacks, we examine Prime+Probe, 
+Flush+Reload, and Flush+Flush attacks. For speculative (also known as 
+transient execution) attacks, Spectre Variant1 (SpectreV1), Meltdown, 
+and SpectreRSB. Our training set is limited to these six attacks.\footnote{For 
+practical reasons, our data set does not include all known microarchitectural 
+attacks  ({\em e.g}, some variants of speculation attacks, side channels on 
+other CPU structures, and RowHammer attacks); however, we believe 
+PerSpectron can be trained to detect additional attacks.}
+
+We then describe the perceptron, a small, single-layered learning network
+that is cheaply implementable in hardware and is the foundational computational 
+structure of our work.
+
+\subsection{Cache attacks}
+In a Prime+Probe attack~\cite{PrimeProbe2015last}, the attacker primes the cache 
+by filling cache sets with its own code or data, then waits for a set time while 
+the victim executes. Finally, the attacker probes the cache by executing and 
+measuring the time to load each set of the primed data or code. If the victim has 
+accessed some cache sets, it will have evicted some of the attacker's cache 
+lines, which the attacker observes via increased access latencies for those lines.
+
+In a Flush+Reload attack~\cite{FlushReload2014Yarom}, the attacker and the 
+victim share some pages in their address space, {\em e.g.} via shared libraries. 
+First, the monitored data is flushed from the cache hierarchy. Second, 
+the attacker waits to allow the victim time to access this data. Third, 
+the attacker reloads the memory line, measuring the time to load it. If during 
+the waiting phase the victim accesses the data, the line will be present in 
+the cache and the reload operation will take a short time, exposing the 
+victim's access behavior. If the victim has not accessed the memory 
+line, the attacker will observe a longer access time. 
+
+Unlike the above attacks, a Flush+Flush attack ~\cite{GrussFlushFlush} does 
+not make any memory accesses and causes no cache misses from the attacker process. 
+Instead, this attack relies on the execution time of the flush instruction: 
+if an address is present in the cache, flushing takes more time. 
+Flush+Flush attacks are stealthy~\cite{GrussFlushFlush}, {\em i.e.} the spy process 
+cannot be detected based on cache hits and misses detection 
+mechanisms\cite{GrussFlushFlush}. Because Flush+Flush conducts neither
+caches accesses nor causes misses, it cannot be detected by Cyclone~\cite{cyclone2019},
+a state-of-the-art side channel detection solution.  
+
+\subsection{Speculative attacks}
+\textit{Spectre Variant1}~\cite{spectre}, or SpectreV1, exploits branch predictors 
+used to predict the direction of conditional branches. The attacker mis-trains 
+the branch predictor to bypass the boundary check of a data structure and 
+speculatively access secret data out of bounds. As a result, the CPU 
+speculatively brings indexing data into the cache that would not have 
+been loaded otherwise. The attacker uses the secret data to index 
+into its own address space and uses a cache side-channel (such as 
+Flush+Reload) to leak the data. 
+
+The \textit{Meltdown} attack~\cite{meltdown} relies on the fact that permission
+checks are performed late in the execution pipeline, and a fault is generated only 
+for a committed instruction. From the time an instruction is marked for permission
+exception at the beginning of the pipeline, to the time that an exception can be raised, 
+if the attacker makes a (normally unauthorized) memory access, the secret data can be 
+cached and leaked using a side-channel.
+
+\textit{SpectreRSB}~\cite{koruyeh2018spectre} is another Spectre attack variant
+that exploits the return stack buffer (RSB), a predictor unit to predict the target of 
+return instructions. In this attack, the attacker pollutes the RSB with an unmatched 
+call/return pair, which redirects the speculative control flow of the program to 
+a malicious Spectre-like setup.
 % \subsection{Perceptron and Microarchitectural Features}
 
  
@@ -106,4 +175,28 @@ set. This often results in increased robustness when the attack model used to ge
 training set is the same as that used by the attacker. It tends to make the model more robust to white-box attacks than to black-box attacks due to gradient masking~\cite{Papernot2016TowardsTS, tramer2020ensemble}.
 
 
+\subsection{Perceptron-based Microarchitectural Attack Detector}
+A perceptron is a vector of weights that records correlations between an input
+vector and a target value. It can be used to classify inputs into one of two
+classes~\cite{RosenblattPerceptron}. We construct a quantized desired response $d(n)$ to a perceptron:
+\[
+  d(n)=\begin{cases}
+    +1, & \text{if $x(n)$ belongs to malicious class}.\\
+    -1, & \text{if $x(n)$  belongs to benign class}.
+  \end{cases}
+\]
+The perceptron computes the weighted sum of the input patterns $x(n)$ 
+and compares it to a threshold value.
+If the sum exceeds the threshold, the output of the perceptron is +1, otherwise, is it -1. 
+The perceptron weights are updated after the desired outcome $d(n)$ of the predicted
+event is known. If the prediction was correct then the weights remain unchanged. 
+Otherwise, the inputs are used to update the corresponding weights:\\
+$w(n+1)=w(n)+\mu[d(n)-y(n)]x(n)$
+where $\mu$ is the learning-rate parameter and the difference $d(n)-y(n)$ is the 
+error signal.
 
+Perceptrons are a natural choice for building a microarchitectural attack
+detector because they can be efficiently implemented in hardware. Other forms
+of neural networks such as those trained by back-propagation, and other forms
+of machine learning such as decision trees, are less attractive because of
+excessive implementation costs. 
