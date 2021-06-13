@@ -20,3 +20,7 @@ are distinctive, and only contain 0/1 values
 % }
  Computing the perceptron output. Multiplication is not necessary to compute the dot product. Simply add the weight when the input bit is 1 and subtract when bit is -1. Only the sign bit of the result is needed to make a prediction. Prediction happens in hardware and in parallel to the execution.
 No additional overhead for hardware counters. Hundreds of counters are included (for debug and verification). Simpler than perceptron-based branch predictors used in mobile CPUs (see e.g. the Samsung Exynos paper in ISCA2020).
+
+\textcolor{red}{DMT: This is definitely a useful data point, but not compelling.  It's not clear 
+whether the reader will place equal value on an attack predictor and a branch predictor, and be willing
+to assign them equal space.  Thus, may need more specifics about area/power/transistors.}

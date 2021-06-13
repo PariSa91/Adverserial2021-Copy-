@@ -16,6 +16,8 @@ practical reasons, our data set does not include all known microarchitectural
 attacks  ({\em e.g}, some variants of speculation attacks, side channels on 
 other CPU structures, and RowHammer attacks); however, we believe 
 PerSpectron can be trained to detect additional attacks.}
+\textcolor{red}{DMT: This footnote clearly identifies you (via the defensive tone) as the 
+PerSpectron author. So may want to reword that.}
 
 We then describe the perceptron, a small, single-layered learning network
 that is cheaply implementable in hardware and is the foundational computational 
@@ -157,6 +159,9 @@ attack method on the substitute network. It was found that such examples designe
 
 \subsection{Defenses}
 
+\textcolor{red}{DMT: Malware detectors have been around far longer than this, right?  So maybe want a more
+general introduction with lots of cites, then this as a recent optimization.}
+
  Hardware Malware Detectors (HMDs)~\cite{RHMD2017} proposed defenses against the proliferation of malware. They stochastically switch between different detectors. These detectors can be shown to be provably more difficult to
 reverse engineer based on resent results in probably approximately
 correct (PAC) learnability theory. 
@@ -200,3 +205,10 @@ detector because they can be efficiently implemented in hardware. Other forms
 of neural networks such as those trained by back-propagation, and other forms
 of machine learning such as decision trees, are less attractive because of
 excessive implementation costs. 
+
+\textcolor{red}{DMT: Isn't perspectron the most important prior work/background?
+
+Remember, you need to write this as an independent author doing a follow-up paper.  So instead
+of integrating the perspectron discussion into the architecture section (and mentioning what's great
+about it), you need to describe it here and focus more on what it's shortcomings are.  If you can't
+convince the reviewer there is something wrong with the prior work, you don't have a paper.}

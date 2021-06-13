@@ -4,12 +4,15 @@
 
 The performance of modern processors is heavily dependent on prediction and speculative execution throughout the pipeline.  Speculative execution, however has recently shown itself to be a two edged sword with the disclosure in early 2018 of microarchitectural attacks such as Spectre and Meltdown~\cite{spectre, meltdown}. The total cost to secure each component individually against all potential microarchitectural attack variations incur increasingly high cost in real estate, performance and energy~\cite{canella2018systematic, schwarz2019zombieload}, giving us an unsatisfying choice between expensive software mitigations or turning off these performance features altogether.  
 
+\textcolor{red}{DMT: This builds up the background slowly, but I prefer a first paragraph that leads
+with the punch line.  It should tell the reader what the main point is (eg, "this paper presents...", then you can give the background
+starting in para 2.}
  
-Several of the mitigation either impose high performance overhead
-to the system and/or only mitigate a specific variant
+The proposed mitigations either impose high performance overhead
+to the system and/or only mitigate a specific attack variant
 ~\cite{taram_csf19, intelanalysis, kiriansky2018dawg, domnitser2012non,saileshwar2019cleanupspec,retpoline, wang2007new, yu2019speculative, yan2018invisispec,CEASER,amd, koruyeh2019speccfi, arm_css}
-Detection mechanisms can provide information to the system to trigger further
-mitigations to avoid their overhead unless an attack is suspected~\cite{gulmezoglu2019fortuneteller, PerSpectron, cyclone2019}.
+A viable Detection mechanism is necessary as it would allow the system to trigger 
+mitigations only as necessary when an attack is detected, thus avoiding their associated overhead~\cite{gulmezoglu2019fortuneteller, PerSpectron, cyclone2019}.
 Prior works have detected microarchitectural attacks through two methods: Tracking unique cyclic properties in hardware ~\cite{cyclone2019} which can detect after the leakage completed, or detecting specific microarchitectural footprints of attacks using machine learning in hardware~\cite{PerSpectron, RHMD2017} and in software~\cite{gulmezoglu2019fortuneteller, cacheBasedDetection2016Chiappetta,
 CloudRadar2016,
 BlackHatFogh,
@@ -18,45 +21,42 @@ ICCAD2015Wang,
 Duppel2013Zhang, 
 mushtaq:cel-01824512}. 
 
-More importantly, using machine learning enables detection before the attack can be successful, including detection of calibration phases required for attacks, training phases, etc. Contrary to static methods such as cyclic inference detection.  
+More importantly, using machine learning enables detection of the attack during the calibration and training phases prior to leakage occurring, Contrary to static methods such as cyclic inference detection.  
 However, this presents a particularly difficult
-problem for simulation-to-real-world transfer: %besides the targeted vulnerable components of hardware changing in each variations of these attacks,
-the detection
-system must also handle {\em evasive attacks} which poses multiple challenges for designing a resilient detector, specially resiliency against {\em adversarial machine learning attacks}. There are three main categories of evasion techniques: (1) bandwidth reduction (2) polymorphic evasion and (3) adversarial machine learning attacks.   
+problem of simulation-to-real-world transfer: %besides the targeted vulnerable components of hardware changing in each variations of these attacks,
+The detection system must also be resilient against multiple evasion techniques which include: (1) bandwidth reduction (2) polymorphic evasion and (3) adversarial machine learning attacks.   
 
  
-Software detectors have high performance overhead due to sampling and are also prone to bandwidth evasion~\cite{Gaudiot2020, PerSpectron}. Bandwidth evasion is based on timing the completion of all attack atomic 
-tasks to fit within the sampling interval. Recent studies~\cite{PerSpectron, cyclone2019} on detection of transient, MDS and cache attacks and malware~\cite{Malware2015, ensembleRaid2015,kazdagli-16,RHMD2017} addressed the software limitations by moving the detection of
-attacks to hardware, allowing thousand-times higher sampling frequency (100ms vs 1$\mu$s) without incurring performance overhead. It would be very difficult for the attacker to implement an microarcitectural attack atomic phase requiring an interval under three microseconds. 
+Software detectors have high performance overhead due to limitations of sampling hardware performance counters in software and are also prone to bandwidth evasion~\cite{Gaudiot2020, PerSpectron}. Bandwidth evasion is based on timing the completion of all attack atomic 
+tasks to fit within the detectors sampling interval. Recent studies~\cite{PerSpectron, cyclone2019} on detection of transient, MDS, cache attacks and malware~\cite{Malware2015, ensembleRaid2015,kazdagli-16,RHMD2017} addressed the software limitations by moving the detection of
+attacks to hardware, allowing thousand-times higher sampling frequency (100ms vs 1$\mu$s) without incurring additional performance overhead. It has been shown that it is almost impossible to for an attacker to time a microarcitectural attacks atomic phases to occur between a sampling interval of under three microseconds. %Samira Cite Persperceron and Guidot here. 
 
-Detection in hardware does not only make evasion based on bandwidth reduction very hard, but it is also shown to make detection more robust against polymorphic evasions~\cite{PerSpectron, cyclone2019, RHMD2017}. Polymorphic attacks is when the attacker attempts to produce different binaries implementing the attack. Because in microarchitectural attacks, attacker can implement instructions that will never get it’s result committed to the registers but force the CPU to execute instructions and leak data, it is important for security solutions 
-to be able to detect attacks in the speculative execution feature 
+Detection in hardware not only makes bandwidth evasion more difficult, but it also makes detection more robust against polymorphic evasions~\cite{PerSpectron, cyclone2019, RHMD2017}. Polymorphic evasion occurs when the attacker attempts to produce different binaries implementing the attack. In microarchitectural attacks, an attacker can implement instructions that will never have it’s result committed to the registers but still force the CPU to execute instructions and leak data.  For this reason, it is imperative to to detect attacks in the speculative execution feature 
 space~\cite{wampler-19, PerSpectron}. 
 
 
 
-Detection in hardware also allows the predictor to efficiently use and monitor a large set of informative microarchitectural features that is not . Recent study~\cite{PerSpectron} shows that low-level  features that are not limited to the committed instructions exist that are invariant under transformation and evasions by typical strategies
-used by malware to evade signature based detectors~\cite{PaulKocher,paulKocherSpectreAttacks} and are accessible from hardware. 
+Detection in hardware also allows the predictor to efficiently use and monitor a large set of informative microarchitectural features that are not available in software. Recent study~\cite{PerSpectron} shows that low-level features exist that are invariant under transformation and evasion strategies typically employed by malware to evade signature based detectors~\cite{PaulKocher,paulKocherSpectreAttacks}. Such features are only accessible in hardware. 
 
-The ability to use high number of features in hardware without incurring performance overhead makes adversarial machine learning attacks
-described in prior hardware malware detector to be potentially prohibitively expensive against hardware detectors.
-However, few studies have conclusively studied methods to increase robustness of  microarchitectural attack detectors in hardware against adversarial machine learning attacks. 
+The ability to use high number of features in hardware without incurring performance overhead renders adversarial machine learning attacks
+described in prior hardware malware detectors potentially prohibitively expensive against hardware detectors,
+however, few studies have conclusively looked into methods to increase robustness of  microarchitectural attack detectors in hardware against adversarial machine learning attacks. 
 
 
-Designing such a system in hardware poses multiple challenges: First, often handcrafted adversarial attacks, and even real microarchitectural attack data are not sufficient for training and evaluation of a robust and reliable detector: While at least 350,000 new malware instances are being created and detected every day, microarchitectural attacks were reported only over 20 distinct attack variations in 2019. 
-Previous detection mechanisms for microarchitectural attacks are trained and evaluated only on small samples, e.g., proof of concept code of current Spectre attacks and limited hand crafted adversarial perturbation similar to typical strategy 
+Designing such a system in hardware poses multiple challenges: First, the available data from handcrafted adversarial attacks, and the existing real microarchitectural attack data is not sufficient for training and evaluation of a robust and reliable detector: While at least 350,000 new malware instances are being created and detected every day, only 20 distinct attack variations of microarchitectural attacks have been reported as of 2019. 
+Previous detection mechanisms for microarchitectural attacks are trained and evaluated only on small samples, e.g., proof of concept code of current Spectre attacks and limited hand crafted adversarial perturbation mimicking the typical strategies 
 used by malware to evade signature based
-detectors~\cite{PaulKocher,paulKocherSpectreAttacks}. This is because no teams of human can realistically design enough adversarial training data for ML-based microarchitectural attack detectors. In this work we attempt to solve this problem. 
+detectors~\cite{PaulKocher,paulKocherSpectreAttacks}. With such a small sample size of reported attacks to work with it is not realistic to expect a viable set of training data for ML-based microarchitectural attack detectors to exist for a long time. In this work we attempt to solve this problem. 
 
 
 
-Second, augmenting the training dataset with adversarial examples~\cite{szegedy2014going, Goodfellow2015ADVexample, moosavidezfooli2016deepfool} has been proven to almost always improve the accuracy of machine learning detectors in other domains such as image classification. However,  projecting the adversarial perturbation to the program is not trivial in microarchitectural attacks. There is no direct mapping from microarchitectural features value to program instructions (software code). Thus, generating adversarial microarchitectural attack {\em manually} is  expensive and cumbersome, often requiring days for developing a single adversarial example that would fool a robust detector {\em i.e.,} to leak data before the detector flags it as suspicious. 
+Second, augmenting the training dataset with adversarial examples~\cite{szegedy2014going, Goodfellow2015ADVexample, moosavidezfooli2016deepfool} has been proven to almost always improve the accuracy of machine learning detectors in other domains such as image classification. However,  projecting the adversarial perturbation to the program is not trivial in microarchitectural attacks. There is no direct mapping from microarchitectural feature values to program instructions (software code). Thus, generating adversarial microarchitectural attacks {\em manually} is both expensive and cumbersome, often requiring days to develop a single adversarial example capable of fooling a robust detector {\em i.e.,} and leak data before being flagged as suspicious. 
 
 Adversarial machine learning examples can be generated {\em automatically}  or {\em manually}. Generating adversarial examples for microarchitectural attacks {\em automatically} has its own challenges.  
 Unlike image pixels that can be easily manipulated without changing the image's visibility in the human eye, manipulating microarchitectural attacks is restricted by its functionality. 
 Prior works in developing evasive malware~\cite{RHMD2017}, dynamically injected instructions to the malware binary to change the feature vector in a controlled way based on the reverse-engineered classifier to attempt to move the malware across the classification boundary. We will show in this work that data augmentation with examples produced by such conventional methods does not improve the accuracy of the microarchitectural attack classifier. 
 
-Microarchitectural attacks' functionality depends profoundly on attacker microarchitecture being set by the attacker to a known state and the relative timing of instructions in the pipeline's fine-grain structures. 
+A microarchitectural attacks' functionality depends profoundly on the victim microarchitecture being set by the attacker to a known state and the relative timing of instructions in the pipeline's fine-grain structures. 
 Insertion of instructions should not interfere with attacks atomic tasks or otherwise can easily disrupt the state generated by attack channels and disable the attack. Yet when the attacker injects instructions carefully, {\em e.i.,} before and after attacks atomic tasks to ensure that the attack's functionality is not affected, we will see that the new microarchitectural samples do not add extra information to the model. This is because hardware detectors generalize based on the attack's footprint, which is observed only during the atomic tasks. Hardware microarchitectural attack detectors have 1000 times higher sampling frequency than software malware detectors. Hence, injected instructions similar to developing evasive malware can not hide the robust hardware detectors' footprint. Therefore,  techniques from evasive malware development are not sufficient for developing adversarial microarchitectural attacks. 
 
 Forth,  
@@ -74,6 +74,9 @@ In the case of microarchitectural attack detection, we want different examples o
  
 Finally, the science of defenses for machine learning based  detection in hardware against evasive attacks are somewhat less well developed. This is the main reason for low confidence in ML-based detection systems in hardware against microarchitectural attacks. In this paper we contribute on several defensive goals:
 
+\textcolor{red}{DMT:"the main reason for low confidence..." likely true but impossible to substantiate,
+so I'd say a little differently.  Maybe just "a major reason" is enough.}
+
 \begin{enumerate}
 \item We present the first use of adversarial learning to improve the
 design of hardware detectors for microarchitectural attacks. 
@@ -86,4 +89,8 @@ design of hardware detectors for microarchitectural attacks.
 
 
 \item We use the adversarial perceptron and a novel adaptive weight adjustment technique to produce \scheme{} which (1) significantly improves detection accuracy for broad range of microarchitectural attacks against evasive and adversarial machine learning attacks, and (2) it can be built in hardware with minimal performance and area overhead. 
+
+\textcolor{red}{DMT:The last one sounds like just a summary of the others.  To make it a distinct 
+contribution, focus a bit more on the tool and then maybe its okay:  "We present \scheme{},..."}
 \end{enumerate}
+ 
